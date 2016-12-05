@@ -22,17 +22,17 @@
     <bean id="3parCGHelper" class="com.emc.storageos.hp3par.impl.HP3PARCGHelper">
     	<property name="hp3parUtil" ref="hp3parUtil"></property>
     </bean>
-
-	<bean id="hp3parApiFactory" class="com.emc.storageos.hp3par.connection.HP3PARApiFactory" init-method="init">
+-->
+	<bean id="pureStorageAPIFactory" class="open.hyperion.purestorage.connection.PureStorageAPIFactory" init-method="init">
 		<property name="connectionTimeoutMs" value="30000"/>
 		<property name="connManagerTimeout" value="60000"/>
 		<property name="socketConnectionTimeoutMs" value="7200000"/>
 	</bean>
 	
-	<bean id="hp3parUtil" class="com.emc.storageos.hp3par.utils.HP3PARUtil">
+	<bean id="hp3parUtil" class="open.hyperion.purestorage.utils.PureStorageUtil">
 		<property name="hp3parApiFactory" ref="hp3parApiFactory"/>
 	</bean>
-	
+<!--	
 	<bean id="3parProvHelper" class="com.emc.storageos.hp3par.impl.HP3PARProvisioningHelper">
     	<property name="hp3parUtil" ref="hp3parUtil"></property>
     </bean>

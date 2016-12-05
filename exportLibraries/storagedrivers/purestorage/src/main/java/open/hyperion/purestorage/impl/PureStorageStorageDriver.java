@@ -29,9 +29,16 @@ import com.emc.storageos.storagedriver.BlockStorageDriver;
 import com.emc.storageos.storagedriver.DefaultStorageDriver;
 import com.emc.storageos.storagedriver.DriverTask;
 
+import com.emc.storageos.storagedriver.model.StorageSystem;
+import com.emc.storageos.storagedriver.model.StorageVolume;
+import com.emc.storageos.storagedriver.model.StorageSystem.SupportedProvisioningType;
+
+import open.hyperion.purestorage.utils.PureStorageConstants;
+import open.hyperion.purestorage.utils.PureStorageUtil;
+
 /**
  * 
- * Implements functions to discover the HP 3PAR storage and provide provisioning
+ * Implements functions to discover the PureStorage storage array and provide provisioning
  * You can refer super class for method details
  *
  */
@@ -39,5 +46,115 @@ public class PureStorageStorageDriver extends DefaultStorageDriver implements Bl
 
     private static final String PURESTORAGE_CONF_FILE = "purestorage-conf.xml";
 	private static final Logger _log = LoggerFactory.getLogger(PureStorageStorageDriver.class);
-	private ApplicationContext parentApplicationContext;
+	private ApplicationContext _parentApplicationContext;
+
+	private PureStorageUtil _pureStorageUtil;
+	private PureStorageConstants _pureStorageConstants;
+
+	public void init() {
+		ApplicationContext context = new ClassPathXmlApplicationContext(new String[] {PURESTORAGE_CONF_FILE}, _parentApplicationContext);
+		_pureStorageUtil = (PureStorageUtil) context.getBean("pureStorageUtil");
+	}
+
+	public void setApplicationContext(ApplicationContext parentApplicationContext) {
+
+	}
+
+	/**
+	 * Get storage system information and capabilities
+	 */
+	@Override
+	public DriverTask discoverStorageSystem(StorageSystem storageSystem) {
+		DriverTask task = createDriverTask(PureStorageConstants.TASK_TYPE_DISCOVER_STORAGE_SYSTEM);
+
+		try {
+			_log.info("PureStorageDriver:discoverStorageSystem information for storage system {}, name {} - start",
+					storageSystem.getIpAddress(), storageSystem.getSystemName());
+
+			URI deviceURI = new URI("https", null, storageSystem.getIpAddress(), storageSystem.getPortNumber(), "/",
+					null, null);
+
+			// remove '/' as lock fails with this name
+			String uniqueId = deviceURI.toString();
+			uniqueId = uniqueId.replace("/", "");
+
+			PureStorageAPI pureStorageAPI = _pureStorageUtil.getHP3PARDevice(storageSystem);
+			String authToken = pureStorageAPI.getAuthToken(storageSystem.getUsername(), storageSystem.getPassword());
+			if (authToken == null) {
+				throw new HP3PARException("Could not get authentication token");
+			}
+
+			// Verify user role
+			pureStorageAPI.verifyUserRole(storageSystem.getUsername());
+
+			// get storage details
+			SystemCommandResult systemRes = pureStorageAPI.getSystemDetails();
+			storageSystem.setSerialNumber(systemRes.getSerialNumber());
+			storageSystem.setMajorVersion(systemRes.getSystemVersion());
+			storageSystem.setMinorVersion("0"); // as there is no individual portion in 3par api
+			
+			// protocols supported
+			List<String> protocols = new ArrayList<String>();
+			protocols.add(Protocols.iSCSI.toString());
+			protocols.add(Protocols.FC.toString());
+			storageSystem.setProtocols(protocols);
+
+			storageSystem.setFirmwareVersion(systemRes.getSystemVersion());
+			if (systemRes.getSystemVersion().startsWith("3.1") || systemRes.getSystemVersion().startsWith("3.2.1") ) {
+			    // SDK is taking care of unsupported message
+			    storageSystem.setIsSupportedVersion(false);
+			} else {
+			    storageSystem.setIsSupportedVersion(true);
+			}
+			
+			storageSystem.setModel(systemRes.getModel());
+			storageSystem.setProvisioningType(SupportedProvisioningType.THIN_AND_THICK);
+			Set<StorageSystem.SupportedReplication> supportedReplications = new HashSet<>();
+            supportedReplications.add(StorageSystem.SupportedReplication.elementReplica);
+            supportedReplications.add(StorageSystem.SupportedReplication.groupReplica);
+			storageSystem.setSupportedReplications(supportedReplications);
+
+			// Storage object properties
+			storageSystem.setNativeId(uniqueId + ":" + systemRes.getSerialNumber());
+
+			if (storageSystem.getDeviceLabel() == null) {
+				if (storageSystem.getDisplayName() != null) {
+					storageSystem.setDeviceLabel(storageSystem.getDisplayName());
+				} else if (systemRes.getName() != null) {
+					storageSystem.setDeviceLabel(systemRes.getName());
+					storageSystem.setDisplayName(systemRes.getName());
+				}
+			}
+
+			storageSystem.setAccessStatus(AccessStatus.READ_WRITE);
+			setConnInfoToRegistry(storageSystem.getNativeId(), storageSystem.getIpAddress(),
+					storageSystem.getPortNumber(), storageSystem.getUsername(), storageSystem.getPassword());
+
+			task.setStatus(DriverTask.TaskStatus.READY);
+			_log.info("PureStorageDriver: Successfull discovery storage system {}, name {} - end",
+					storageSystem.getIpAddress(), storageSystem.getSystemName());
+		} catch (Exception e) {
+			String msg = String.format("PureStorageDriver: Unable to discover the storage system %s ip %s; Error: %s.\n",
+					storageSystem.getSystemName(), storageSystem.getIpAddress(), e);
+			_log.error(msg);
+			_log.error(CompleteError.getStackTrace(e));
+			task.setMessage(msg);
+			task.setStatus(DriverTask.TaskStatus.FAILED);
+			e.printStackTrace();
+		}
+
+		return task;
+	}
+
+	/**
+	 * Create driver task for task type
+	 *
+	 * @param taskType
+	 */
+	private DriverTask createDriverTask(String taskType) {
+		String taskID = String.format("%s+%s+%s", PureStorageConstants.DRIVER_NAME, taskType, UUID.randomUUID());
+		DriverTask task = new HP3PARDriverTask(taskID);
+		return task;
+	}
+	
 }
