@@ -24,17 +24,54 @@
 
 package open.hyperion.purestorage.impl;
 
+import java.net.URI;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+import java.util.UUID;
+
 import com.emc.storageos.storagedriver.AbstractStorageDriver;
 import com.emc.storageos.storagedriver.BlockStorageDriver;
 import com.emc.storageos.storagedriver.DefaultStorageDriver;
 import com.emc.storageos.storagedriver.DriverTask;
-
+import com.emc.storageos.storagedriver.HostExportInfo;
+import com.emc.storageos.storagedriver.RegistrationData;
+import com.emc.storageos.storagedriver.model.Initiator;
+import com.emc.storageos.storagedriver.model.StorageHostComponent;
+import com.emc.storageos.storagedriver.model.StorageObject;
+import com.emc.storageos.storagedriver.model.StorageObject.AccessStatus;
+import com.emc.storageos.storagedriver.model.StoragePool;
+import com.emc.storageos.storagedriver.model.StoragePool.PoolOperationalStatus;
+import com.emc.storageos.storagedriver.model.StoragePool.PoolServiceType;
+import com.emc.storageos.storagedriver.model.StoragePool.Protocols;
+import com.emc.storageos.storagedriver.model.StoragePool.RaidLevels;
+import com.emc.storageos.storagedriver.model.StoragePool.SupportedDriveTypes;
+import com.emc.storageos.storagedriver.model.StoragePool.SupportedResourceType;
+import com.emc.storageos.storagedriver.model.StoragePort;
+import com.emc.storageos.storagedriver.model.StorageProvider;
 import com.emc.storageos.storagedriver.model.StorageSystem;
-import com.emc.storageos.storagedriver.model.StorageVolume;
 import com.emc.storageos.storagedriver.model.StorageSystem.SupportedProvisioningType;
+import com.emc.storageos.storagedriver.model.StorageVolume;
+import com.emc.storageos.storagedriver.model.VolumeClone;
+import com.emc.storageos.storagedriver.model.VolumeConsistencyGroup;
+import com.emc.storageos.storagedriver.model.VolumeMirror;
+import com.emc.storageos.storagedriver.model.VolumeSnapshot;
+import com.emc.storageos.storagedriver.storagecapabilities.CapabilityInstance;
+import com.emc.storageos.storagedriver.storagecapabilities.DeduplicationCapabilityDefinition;
+import com.emc.storageos.storagedriver.storagecapabilities.StorageCapabilities;
 
 import open.hyperion.purestorage.utils.PureStorageConstants;
 import open.hyperion.purestorage.utils.PureStorageUtil;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.context.ApplicationContext;
+import org.springframework.context.support.ClassPathXmlApplicationContext;
+
 
 /**
  * 
@@ -78,10 +115,10 @@ public class PureStorageStorageDriver extends DefaultStorageDriver implements Bl
 			String uniqueId = deviceURI.toString();
 			uniqueId = uniqueId.replace("/", "");
 
-			PureStorageAPI pureStorageAPI = _pureStorageUtil.getHP3PARDevice(storageSystem);
+			PureStorageAPI pureStorageAPI = _pureStorageUtil.getPureStorageDevice(storageSystem);
 			String authToken = pureStorageAPI.getAuthToken(storageSystem.getUsername(), storageSystem.getPassword());
 			if (authToken == null) {
-				throw new HP3PARException("Could not get authentication token");
+				throw new PureStorageException("Could not get authentication token");
 			}
 
 			// Verify user role
@@ -91,7 +128,7 @@ public class PureStorageStorageDriver extends DefaultStorageDriver implements Bl
 			SystemCommandResult systemRes = pureStorageAPI.getSystemDetails();
 			storageSystem.setSerialNumber(systemRes.getSerialNumber());
 			storageSystem.setMajorVersion(systemRes.getSystemVersion());
-			storageSystem.setMinorVersion("0"); // as there is no individual portion in 3par api
+			storageSystem.setMinorVersion("0"); // as there is no individual portion in PureStorage API
 			
 			// protocols supported
 			List<String> protocols = new ArrayList<String>();
@@ -157,4 +194,25 @@ public class PureStorageStorageDriver extends DefaultStorageDriver implements Bl
 		return task;
 	}
 	
+	private void setConnInfoToRegistry(String systemNativeId, String ipAddress, int port, String username,
+			String password) {
+		_log.info("PureStorageDriver:Saving connection info in registry enter");
+		Map<String, List<String>> attributes = new HashMap<>();
+		List<String> listIP = new ArrayList<>();
+		List<String> listPort = new ArrayList<>();
+		List<String> listUserName = new ArrayList<>();
+		List<String> listPwd = new ArrayList<>();
+
+		listIP.add(ipAddress);
+		attributes.put(HP3PARConstants.IP_ADDRESS, listIP);
+		listPort.add(Integer.toString(port));
+		attributes.put(HP3PARConstants.PORT_NUMBER, listPort);
+		listUserName.add(username);
+		attributes.put(HP3PARConstants.USER_NAME, listUserName);
+		listPwd.add(password);
+		attributes.put(HP3PARConstants.PASSWORD, listPwd);
+		this.driverRegistry.setDriverAttributesForKey(PureStorageConstants.DRIVER_NAME, systemNativeId, attributes);
+		_log.info("PureStorageDriver:Saving connection info in registry leave");
+	}
+
 }

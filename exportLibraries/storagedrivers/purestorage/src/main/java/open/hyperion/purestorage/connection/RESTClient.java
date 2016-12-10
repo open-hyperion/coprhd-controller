@@ -29,7 +29,7 @@ import com.sun.jersey.api.client.*;
 import javax.ws.rs.core.MediaType;
 
 /*
- * REST communication with 3PAR storage device 
+ * REST communication with Pure Storage storage device 
  */
 public class RESTClient {
     private Client _client;

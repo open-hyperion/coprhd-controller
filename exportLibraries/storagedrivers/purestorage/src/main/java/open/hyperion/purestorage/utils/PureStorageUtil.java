@@ -22,7 +22,7 @@
  * SOFTWARE.
  */
 
-package com.emc.storageos.hp3par.utils;
+package open.hyperion.purestorage.utils;
 
 import java.net.URI;
 import java.util.List;
