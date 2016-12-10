@@ -70,7 +70,8 @@ class StorageSystem(object):
         'ecs' ,
         'datadomain',
         'ceph',
-        'hp3par']
+        'hp3par',
+        'purestorage']
 
     BLOCK_SYSTEM_LIST = [
         'vnxblock',
@@ -83,7 +84,8 @@ class StorageSystem(object):
         'vnxe',
         'ceph',
         'unity',
-        'hp3par']
+        'hp3par',
+        'purestorage']
 
     ARRAY_AFFINITY_SYSTEM_LIST = [
         'vmax',
@@ -116,7 +118,8 @@ class StorageSystem(object):
         'ecs' ,
         'unity',
         'vnxe',
-        'hp3par']
+        'hp3par',
+        'purestorage']
 
     def __init__(self, ipAddr, port):
         '''
