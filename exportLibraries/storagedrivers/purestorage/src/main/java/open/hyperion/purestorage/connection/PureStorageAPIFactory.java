@@ -66,13 +66,9 @@ import com.emc.storageos.hp3par.command.VirtualLunsList;
 import com.emc.storageos.hp3par.command.VolumeDetailsCommandResult;
 */
 
-//import open.hyperion.purestorage.connection.PureStorageAPIFactory;
 import open.hyperion.purestorage.impl.PureStorageAPI;
 import open.hyperion.purestorage.impl.PureStorageException;
-
-import com.emc.storageos.hp3par.impl.HP3PARApi;
-import com.emc.storageos.hp3par.impl.HP3PARException;
-import com.emc.storageos.hp3par.utils.CompleteError;
+import open.hyperion.purestorage.utils.CompleteError;
 
 import com.sun.jersey.api.client.Client;
 import com.sun.jersey.api.client.ClientHandler;
@@ -89,7 +85,7 @@ import com.sun.jersey.client.urlconnection.URLConnectionClientHandler;
  * PureStorage API client factory
  */
 public class PureStorageAPIFactory {
-    private Logger _log = LoggerFactory.getLogger(HP3PARApiFactory.class);
+    private Logger _log = LoggerFactory.getLogger(PureStorageAPIFactory.class);
     private static final int DEFAULT_MAX_CONN = 300;
     private static final int DEFAULT_MAX_CONN_PER_HOST = 100;
     private static final int DEFAULT_CONN_TIMEOUT = 1000 * 30;
@@ -102,7 +98,7 @@ public class PureStorageAPIFactory {
     private int _socketConnTimeout = DEFAULT_SOCKET_CONN_TIMEOUT;
     private int _connManagerTimeout = DEFAULT_CONN_MGR_TIMEOUT;
 
-    private ConcurrentMap<String, HP3PARApi> _clientMap;
+    private ConcurrentMap<String, PureStorageAPI> _clientMap;
     private MultiThreadedHttpConnectionManager _connectionManager;
 
     /**
@@ -237,7 +233,7 @@ public class PureStorageAPIFactory {
      * @param username
      * @param password
      * @return api client
-     * @throws HP3PARException 
+     * @throws PureStorageException 
      */
     public PureStorageAPI getRESTClient(URI endpoint, String username, String password) throws PureStorageException {
         try {

@@ -64,6 +64,7 @@ import com.emc.storageos.storagedriver.storagecapabilities.CapabilityInstance;
 import com.emc.storageos.storagedriver.storagecapabilities.DeduplicationCapabilityDefinition;
 import com.emc.storageos.storagedriver.storagecapabilities.StorageCapabilities;
 
+import open.hyperion.purestorage.utils.CompleteError;
 import open.hyperion.purestorage.utils.PureStorageConstants;
 import open.hyperion.purestorage.utils.PureStorageUtil;
 
@@ -190,7 +191,7 @@ public class PureStorageStorageDriver extends DefaultStorageDriver implements Bl
 	 */
 	private DriverTask createDriverTask(String taskType) {
 		String taskID = String.format("%s+%s+%s", PureStorageConstants.DRIVER_NAME, taskType, UUID.randomUUID());
-		DriverTask task = new HP3PARDriverTask(taskID);
+		DriverTask task = new PureStorageDriverTask(taskID);
 		return task;
 	}
 	
@@ -204,13 +205,13 @@ public class PureStorageStorageDriver extends DefaultStorageDriver implements Bl
 		List<String> listPwd = new ArrayList<>();
 
 		listIP.add(ipAddress);
-		attributes.put(HP3PARConstants.IP_ADDRESS, listIP);
+		attributes.put(PureStorageConstants.IP_ADDRESS, listIP);
 		listPort.add(Integer.toString(port));
-		attributes.put(HP3PARConstants.PORT_NUMBER, listPort);
+		attributes.put(PureStorageConstants.PORT_NUMBER, listPort);
 		listUserName.add(username);
-		attributes.put(HP3PARConstants.USER_NAME, listUserName);
+		attributes.put(PureStorageConstants.USER_NAME, listUserName);
 		listPwd.add(password);
-		attributes.put(HP3PARConstants.PASSWORD, listPwd);
+		attributes.put(PureStorageConstants.PASSWORD, listPwd);
 		this.driverRegistry.setDriverAttributesForKey(PureStorageConstants.DRIVER_NAME, systemNativeId, attributes);
 		_log.info("PureStorageDriver:Saving connection info in registry leave");
 	}

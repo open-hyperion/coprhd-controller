@@ -48,18 +48,18 @@ public class CompleteError {
     }
  
     public int getHttpCode() {
-        return httpCode;
+        return _httpCode;
     }
  
     public void setHttpCode(int httpCode) {
         _httpCode = httpCode;
     }
  
-    public String getHp3parCode() {
+    public String getPureStorageCode() {
         return _pureStorageCode;
     }
  
-    public void setHp3parCode(String pureStorageCode) {
+    public void setPureStorageCode(String pureStorageCode) {
         _pureStorageCode = pureStorageCode;
     }
 }
