@@ -45,7 +45,7 @@ public class PureStorageAPI {
 
 	private final URI _baseURL;
 	private final RESTClient _client;
-	private Logger _log = LoggerFactory.getLoggerPureStorageAPI.class);
+	private Logger _log = LoggerFactory.getLogger(PureStorageAPI.class);
 	private String _authToken;
 	private String _user;
 	private String _password;
