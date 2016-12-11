@@ -32,7 +32,7 @@ public class SystemCommandResult {
     private String _totalNodes;
     
     public String getName() {
-        return name;
+        return _name;
     }
     public void setName(String name) {
         _name = name;
