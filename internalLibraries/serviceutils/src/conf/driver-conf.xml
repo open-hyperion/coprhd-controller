@@ -29,7 +29,8 @@
                    <value>driversystem</value> <!-- simulator -->
                    <value>scaleiosystem</value>
                    <value>hp3par</value> <!-- HP3Par Driver-->
-                   <value>purestorage</value> <!-- PureStorage Driver-->
+                   <value>purestorage</value> <!-- Pure Storage Driver-->
+                   <value>nimblestorage</value> <!-- Nimble Storage Driver-->
                    <value>dellscsystem</value>
                </set>
            </property>
@@ -57,7 +58,8 @@
                    <value>driversystem</value>
                    <value>scaleiosystem</value>
                    <value>hp3par</value> <!-- HP3Par Driver-->
-                   <value>purestorage</value> <!-- PureStorage Driver-->                   
+                   <value>purestorage</value> <!-- Pure Storage Driver-->                   
+                   <value>nimblestorage</value> <!-- Nimble Storage Driver-->
                </set>
            </property>
 

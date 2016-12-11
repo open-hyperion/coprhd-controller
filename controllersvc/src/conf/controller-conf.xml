@@ -446,6 +446,7 @@
                 <entry key="driverprovider" value-ref="storageDriverSimulator"/>
                 <entry key="hp3par"         value-ref="hp3Par"/>
                 <entry key="purestorage"    value-ref="pureStorage"/>                
+                <entry key="nimblestorage"    value-ref="nimbleStorage"/>                
                 <entry key="dellscprovider" value-ref="dellsc"/>
                 <entry key="dellscsystem"   value-ref="dellsc"/>
             </map>
@@ -458,9 +459,11 @@
     <bean id="storageDriverSimulator" class="com.emc.storageos.driver.driversimulator.StorageDriverSimulator">
     </bean>
     
-     <bean id="hp3Par"     class="com.emc.storageos.hp3par.impl.HP3PARStorageDriver" init-method="init">
+     <bean id="hp3Par"       class="com.emc.storageos.hp3par.impl.HP3PARStorageDriver"           init-method="init">
     </bean>
-    <bean id="pureStorage" class="open.hyperion.purestorage.impl.PureStorageStorageDriver" init-method="init">
+    <bean id="pureStorage"   class="open.hyperion.purestorage.impl.PureStorageStorageDriver"     init-method="init">
+    </bean>    
+    <bean id="nimbleStorage" class="open.hyperion.nimblestorage.impl.NimbleStorageStorageDriver" init-method="init">
     </bean>    
 	
     <bean id="dellsc" class="com.emc.storageos.driver.dellsc.DellSCStorageDriver"/>

@@ -146,7 +146,7 @@
           </div>
         </div>
         <div ng-if="vpool.provisioningType == '${models.ProvisioningTypes.THIN}'">
-        	<div ng-if="['${models.StorageSystemTypes.HP3PAR}'].indexOf(vpool.systemType) > -1">
+        	<div ng-if="['${models.StorageSystemTypes.HP3PAR}','${models.StorageSystemType.PURESTORAGE}','${models.StorageSystemType.NIMBLESTORAGE}'].indexOf(vpool.systemType) > -1">
         		<control-group v-field="vpool.enableDeDup">
         			<boolean-checkbox v-default-value="false"  v-disabled='locked'></boolean-checkbox>
         		</control-group>

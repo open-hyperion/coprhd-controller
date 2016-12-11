@@ -295,6 +295,7 @@ StorageSystemType.hds=Hitachi
 StorageSystemType.ibmxiv=IBM XIV
 StorageSystemType.hp3par=HPE 3PAR
 StorageSystemType.purestorage=PureStorage
+StorageSystemType.nimblestorage=Nimble Storage
 StorageSystemType.openstack=Third-party block
 StorageSystemType.scaleio=Block Storage Powered by ScaleIO
 StorageSystemType.scaleioapi=ScaleIO Gateway

@@ -40,7 +40,7 @@ dependencies {
             project(":recoverpoint"),
             project(":compute"),
             project(":cinder"),
-	    project(":glance"),
+	        project(":glance"),
             project(":hds"),
             project(":scaleio"),
             project(":xtremio"),
@@ -52,7 +52,8 @@ dependencies {
     // temp. here, to get simulator to controllersvc classpath
             project(":storagedriversimulator"),
             project(":3par"),
-            project(":purestorage");
+            project(":purestorage"),
+            project(":nimblestorage");
             
     testCompile library(easymock)
 }

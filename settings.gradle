@@ -30,6 +30,7 @@ addProjects(
 	    "exportLibraries/storagedrivers/storagedriversimulator",    
         "exportLibraries/storagedrivers/3par",
         "exportLibraries/storagedrivers/purestorage",
+        "exportLibraries/storagedrivers/nimblestorage",
 	    "exportLibraries/storagedrivers/dellsc",
         "geodbsvc",
         "geosvc",
