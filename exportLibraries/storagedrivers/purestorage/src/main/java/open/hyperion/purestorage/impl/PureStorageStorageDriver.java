@@ -67,6 +67,7 @@ import com.emc.storageos.storagedriver.storagecapabilities.StorageCapabilities;
 import open.hyperion.purestorage.utils.CompleteError;
 import open.hyperion.purestorage.utils.PureStorageConstants;
 import open.hyperion.purestorage.utils.PureStorageUtil;
+import open.hyperion.purestorage.command.SystemCommandResult;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

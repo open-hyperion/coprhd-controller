@@ -39,6 +39,12 @@ import com.google.gson.Gson;
 import com.google.json.JsonSanitizer;
 import com.sun.jersey.api.client.ClientResponse;
 
+import open.hyperion.purestorage.connection.RESTClient;
+import open.hyperion.purestorage.impl.PureStorageException;
+
+import open.hyperion.purestorage.command.Privileges;
+import open.hyperion.purestorage.command.UserRoleCommandResult;
+
 import static com.google.json.JsonSanitizer.*;
 
 public class PureStorageAPI {
@@ -54,8 +60,8 @@ public class PureStorageAPI {
 	private static final URI URI_LOGIN   = URI.create("/api/1.8/auth/apitoken");
 	private static final URI URI_SESSION = URI.create("/api/1.8/auth/session");
 
-	public PureStorageAPI(URI endpoint, RESTClient client, String username, String password) {
-		_baseURL  = endpoint;
+	public PureStorageAPI(URI baseURL, RESTClient client, String username, String password) {
+		_baseURL  = baseURL;
 		_client   = client;
 		_user     = username;
 		_password = password;
@@ -90,9 +96,9 @@ public class PureStorageAPI {
 			} else {
 				JSONObject jObj = clientResp.getEntity(JSONObject.class);
 				authToken = jObj.getString("api_token");
-				this._authToken = authToken;
-				this._user = user;
-				this._password = password;
+				_authToken = authToken;
+				_user = username;
+				_password = password;
 				_log.info("PureStorageDriver:getAuthToken set");
 			}
 			return authToken;
@@ -118,7 +124,7 @@ public class PureStorageAPI {
         String body= "{\"username\":\"" + _user + "\", \"password\":\"" + _password + "\"}";
 
         try {
-            clientResp = _client.post_json(_baseUrl.resolve(URI_LOGIN), body);
+            clientResp = _client.post_json(_baseURL.resolve(URI_LOGIN), body);
             if (clientResp == null) {
                 _log.error("PureStorageDriver:There is no response from PureStorage");
                 throw new PureStorageException("There is no response from PureStorage");
@@ -160,4 +166,50 @@ public class PureStorageAPI {
         return detailedResponse;
     }
 
+    public void verifyUserRole(String name) throws Exception {
+        _log.info("PureStorageDriver:verifyUserRole enter");
+        ClientResponse clientResp = null;
+        final String path = MessageFormat.format(URI_USER_ROLE, name);
+        _log.info("PureStorageDriver: verifyUserRole path is {}", path);
+
+        try {
+            clientResp = get(path);
+            if (clientResp == null) {
+                _log.error("PureStorageDriver:There is no response from 3PAR");
+                throw new PureStorageException("There is no response from 3PAR");
+            } else if (clientResp.getStatus() != 200) {
+                String errResp = getResponseDetails(clientResp);
+                throw new PureStorageException(errResp);
+            } else {
+                String responseString = clientResp.getEntity(String.class);
+                _log.info("PureStorageDriver:getSystemDetails 3PAR response is {}", responseString);
+                UserRoleCommandResult roleRes = new Gson().fromJson(sanitize(responseString),
+                        UserRoleCommandResult.class);
+
+                boolean superUser = false;
+                for (Privileges currPriv:roleRes.getPrivileges()) {
+
+                    if ( (currPriv.getDomain().compareToIgnoreCase("all") == 0) && 
+                            (currPriv.getRole().compareToIgnoreCase("super") == 0)) {
+                        superUser = true;
+                    }
+                }
+                
+                if (superUser == false) {
+                    _log.error("PureStorageDriver:User does not have sufficient privilege to discover");
+                    throw new PureStorageException("User does not have sufficient privilege");
+                } else {
+                    _log.info("PureStorageDriver:User is super user");
+                }
+                
+            }
+        } catch (Exception e) {
+            throw e;
+        } finally {
+            if (clientResp != null) {
+                clientResp.close();
+            }
+            _log.info("PureStorageDriver:verifyUserRole leave");
+        } //end try/catch/finally
+    }
 }
