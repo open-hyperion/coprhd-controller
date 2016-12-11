@@ -60,6 +60,9 @@ public class PureStorageAPI {
 	private static final URI URI_LOGIN   = URI.create("/api/1.8/auth/apitoken");
 	private static final URI URI_SESSION = URI.create("/api/1.8/auth/session");
 
+	private static final String URI_USER_ROLE = "/api/v1/users/{0}";
+
+
 	public PureStorageAPI(URI baseURL, RESTClient client, String username, String password) {
 		_baseURL  = baseURL;
 		_client   = client;
@@ -92,7 +95,7 @@ public class PureStorageAPI {
 				throw new PureStorageException("There is no response from PureStorage");
 			} else if (clientResp.getStatus() != 201) {
 				String errResp = getResponseDetails(clientResp);
-				throw PureStorageException(errResp);
+				throw new PureStorageException(errResp);
 			} else {
 				JSONObject jObj = clientResp.getEntity(JSONObject.class);
 				authToken = jObj.getString("api_token");
@@ -212,4 +215,74 @@ public class PureStorageAPI {
             _log.info("PureStorageDriver:verifyUserRole leave");
         } //end try/catch/finally
     }
+
+    /**
+     * Gets the storage array information
+     * @return array details
+     * @throws Exception
+     */
+    public SystemCommandResult getSystemDetails() throws Exception {
+        _log.info("PureStorageDriver:getSystemDetails enter");
+        ClientResponse clientResp = null;
+
+        try {
+            clientResp = get(URI_SYSTEM);
+            if (clientResp == null) {
+                _log.error("PureStorageDriver:There is no response from Pure Storage");
+                throw new PureStorageException("There is no response from Pure Storage");
+            } else if (clientResp.getStatus() != 200) {
+                String errResp = getResponseDetails(clientResp);
+                throw new PureStorageException(errResp);
+            } else {
+                String responseString = clientResp.getEntity(String.class);
+                _log.info("PureStorageDriver:getSystemDetails Pure Storage response is {}", responseString);
+                SystemCommandResult systemRes = new Gson().fromJson(sanitize(responseString),
+                        SystemCommandResult.class);
+                return systemRes;
+            }
+        } catch (Exception e) {
+            throw e;
+        } finally {
+            if (clientResp != null) {
+                clientResp.close();
+            }
+            _log.info("PureStorageDriver:getSystemDetails leave");
+        } //end try/catch/finally
+    }
+
+    private ClientResponse get(final String uri) throws Exception {
+        ClientResponse clientResp = _client.get_json(_baseUrl.resolve(uri), _authToken);
+        if (clientResp.getStatus() == 403) {
+            getAuthToken();
+            clientResp = _client.get_json(_baseUrl.resolve(uri), _authToken);
+        }
+        return clientResp;
+    }
+    
+    private ClientResponse post(final String uri, String body) throws Exception {
+        ClientResponse clientResp = _client.post_json(_baseUrl.resolve(uri), _authToken, body);
+        if (clientResp.getStatus() == 403) {
+            getAuthToken();
+            clientResp = _client.post_json(_baseUrl.resolve(uri), _authToken, body);
+        }
+        return clientResp;
+    }
+    
+    private ClientResponse put(final String uri, String body) throws Exception {
+        ClientResponse clientResp = _client.put_json(_baseUrl.resolve(uri), _authToken, body);
+        if (clientResp.getStatus() == 403) {
+            getAuthToken();
+            clientResp = _client.put_json(_baseUrl.resolve(uri), _authToken, body);
+        }
+        return clientResp;
+    }
+    
+    private ClientResponse delete(final String uri) throws Exception {
+        ClientResponse clientResp = _client.delete_json(_baseUrl.resolve(uri), _authToken);
+        if (clientResp.getStatus() == 403) {
+            getAuthToken();
+            clientResp = _client.delete_json(_baseUrl.resolve(uri), _authToken);
+        }
+        return clientResp;
+    }        
 }

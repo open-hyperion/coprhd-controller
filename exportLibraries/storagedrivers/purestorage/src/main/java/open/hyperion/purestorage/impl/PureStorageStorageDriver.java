@@ -64,6 +64,7 @@ import com.emc.storageos.storagedriver.storagecapabilities.CapabilityInstance;
 import com.emc.storageos.storagedriver.storagecapabilities.DeduplicationCapabilityDefinition;
 import com.emc.storageos.storagedriver.storagecapabilities.StorageCapabilities;
 
+import open.hyperion.purestorage.impl.PureStorageAPI;
 import open.hyperion.purestorage.utils.CompleteError;
 import open.hyperion.purestorage.utils.PureStorageConstants;
 import open.hyperion.purestorage.utils.PureStorageUtil;
