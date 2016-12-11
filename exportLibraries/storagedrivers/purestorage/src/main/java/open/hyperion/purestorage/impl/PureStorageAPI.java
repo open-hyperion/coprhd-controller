@@ -44,6 +44,8 @@ import open.hyperion.purestorage.impl.PureStorageException;
 
 import open.hyperion.purestorage.command.Privileges;
 import open.hyperion.purestorage.command.UserRoleCommandResult;
+import open.hyperion.purestorage.command.SystemCommandResult;
+
 
 import static com.google.json.JsonSanitizer.*;
 
@@ -60,6 +62,7 @@ public class PureStorageAPI {
 	private static final URI URI_LOGIN   = URI.create("/api/1.8/auth/apitoken");
 	private static final URI URI_SESSION = URI.create("/api/1.8/auth/session");
 
+	private static final String URI_SYSTEM    = "/api/v1/system";
 	private static final String URI_USER_ROLE = "/api/v1/users/{0}";
 
 
@@ -251,37 +254,37 @@ public class PureStorageAPI {
     }
 
     private ClientResponse get(final String uri) throws Exception {
-        ClientResponse clientResp = _client.get_json(_baseUrl.resolve(uri), _authToken);
+        ClientResponse clientResp = _client.get_json(_baseURL.resolve(uri), _authToken);
         if (clientResp.getStatus() == 403) {
             getAuthToken();
-            clientResp = _client.get_json(_baseUrl.resolve(uri), _authToken);
+            clientResp = _client.get_json(_baseURL.resolve(uri), _authToken);
         }
         return clientResp;
     }
     
     private ClientResponse post(final String uri, String body) throws Exception {
-        ClientResponse clientResp = _client.post_json(_baseUrl.resolve(uri), _authToken, body);
+        ClientResponse clientResp = _client.post_json(_baseURL.resolve(uri), _authToken, body);
         if (clientResp.getStatus() == 403) {
             getAuthToken();
-            clientResp = _client.post_json(_baseUrl.resolve(uri), _authToken, body);
+            clientResp = _client.post_json(_baseURL.resolve(uri), _authToken, body);
         }
         return clientResp;
     }
     
     private ClientResponse put(final String uri, String body) throws Exception {
-        ClientResponse clientResp = _client.put_json(_baseUrl.resolve(uri), _authToken, body);
+        ClientResponse clientResp = _client.put_json(_baseURL.resolve(uri), _authToken, body);
         if (clientResp.getStatus() == 403) {
             getAuthToken();
-            clientResp = _client.put_json(_baseUrl.resolve(uri), _authToken, body);
+            clientResp = _client.put_json(_baseURL.resolve(uri), _authToken, body);
         }
         return clientResp;
     }
     
     private ClientResponse delete(final String uri) throws Exception {
-        ClientResponse clientResp = _client.delete_json(_baseUrl.resolve(uri), _authToken);
+        ClientResponse clientResp = _client.delete_json(_baseURL.resolve(uri), _authToken);
         if (clientResp.getStatus() == 403) {
             getAuthToken();
-            clientResp = _client.delete_json(_baseUrl.resolve(uri), _authToken);
+            clientResp = _client.delete_json(_baseURL.resolve(uri), _authToken);
         }
         return clientResp;
     }        
