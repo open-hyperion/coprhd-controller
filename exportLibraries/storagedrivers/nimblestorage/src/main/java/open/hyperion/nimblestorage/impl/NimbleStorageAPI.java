@@ -89,7 +89,7 @@ public class NimbleStorageAPI {
 
 		String authToken = null;
 		ClientResponse clientResp = null;
-		String body = "{\"username\":\"" + username + "\", \"password\":\"" + password + "\"}";
+		String body = "{\"data\":{\"username\":\"" + username + "\", \"password\":\"" + password + "\"}}";
 
 		try {
 			clientResp = _client.post_json(_baseURL.resolve(URI_LOGIN), body);

@@ -261,7 +261,7 @@ public class NimbleStorageAPIFactory {
     public static void main(String[] args) {
         System.out.println("starting NimbleStorage main");
         try {
-        	URI uri = URI.create(String.format("https://<ip_address>:<port>/api/1.8/auth/apitoken"));
+        	URI uri = URI.create(String.format("https://<ip_address>:<port>/v1/tokens"));
         	NimbleStorageAPIFactory factory = new NimbleStorageAPIFactory();
         	factory.setConnectionTimeoutMs(30000*4);
         	factory.setConnManagerTimeout(60000*4);
