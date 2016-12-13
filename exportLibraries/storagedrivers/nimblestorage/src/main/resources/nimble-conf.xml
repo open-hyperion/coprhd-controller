@@ -30,7 +30,7 @@
 	</bean>
 	
 	<bean id="nimbleStorageUtil" class="open.hyperion.nimblestorge.utils.NimbleUtil">
-		<property name="NimbleStorageAPIFactory" ref="NimbleStorageAPIFactory"/>
+		<property name="nimbleStorageAPIFactory" ref="nimbleStorageAPIFactory"/>
 	</bean>
 <!--	
 	<bean id="3parProvHelper" class="com.emc.storageos.hp3par.impl.HP3PARProvisioningHelper">
