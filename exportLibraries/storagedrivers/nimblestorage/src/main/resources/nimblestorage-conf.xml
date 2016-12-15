@@ -29,7 +29,7 @@
 		<property name="socketConnectionTimeoutMs" value="7200000"/>
 	</bean>
 	
-	<bean id="nimbleStorageUtil" class="open.hyperion.nimblestorge.utils.NimbleUtil">
+	<bean id="nimbleStorageUtil" class="open.hyperion.nimblestorge.utils.NimbleStorageUtil">
 		<property name="nimbleStorageAPIFactory" ref="nimbleStorageAPIFactory"/>
 	</bean>
 <!--	
