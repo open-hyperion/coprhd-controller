@@ -74,4 +74,13 @@ public class NimbleStorageUtil {
 			throw new NimbleStorageException("Error in getting NimbleStorage device");
 		}
 	}
+
+	public NimbleStorageAPIFactory getNimbleStorageAPIFactory() {
+		return _nimbleStorageAPIFactory;
+	}
+
+	public void setNimbleStorageAPIFactory(NimbleStorageAPIFactory nimbleStorageAPIFactory) {
+		_nimbleStorageAPIFactory = nimbleStorageAPIFactory;
+	}
+
 }

@@ -74,4 +74,13 @@ public class PureStorageUtil {
 			throw new PureStorageException("Error in getting PureStorage device");
 		}
 	}
+
+	public PureStorageAPIFactory getPureStorageAPIFactory() {
+		return _pureStorageAPIFactory;
+	}
+
+	public void setPureStorageAPIFactory(PureStorageAPIFactory pureStorageAPIFactory) {
+		_pureStorageAPIFactory = pureStorageAPIFactory;
+	}
+
 }
