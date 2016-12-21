@@ -93,10 +93,11 @@ public class PureStorageAPI {
 
 		try {
 			clientResp = _client.post_json(_baseURL.resolve(URI_LOGIN), body);
+			_log.info(clientResp);
 			if (clientResp == null) {
 				_log.error("PureStorageDriver:There is no response from PureStorage");
 				throw new PureStorageException("There is no response from PureStorage");
-			} else if (clientResp.getStatus() != 201) {
+			} else if (clientResp.getStatus() != 200) {
 				String errResp = getResponseDetails(clientResp);
 				throw new PureStorageException(errResp);
 			} else {
