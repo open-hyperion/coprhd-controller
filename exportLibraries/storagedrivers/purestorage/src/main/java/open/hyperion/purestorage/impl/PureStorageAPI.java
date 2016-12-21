@@ -59,8 +59,8 @@ public class PureStorageAPI {
 	private String _password;
 
     // Authentication
-	private static final URI URI_LOGIN   = URI.create("/api/1.8/auth/apitoken");
-	private static final URI URI_SESSION = URI.create("/api/1.8/auth/session");
+	private static final URI URI_LOGIN   = URI.create("/api/1.6/auth/apitoken");
+	private static final URI URI_SESSION = URI.create("/api/1.6/auth/session");
 
 	private static final String URI_SYSTEM    = "/api/v1/system";
 	private static final String URI_USER_ROLE = "/api/v1/users/{0}";
