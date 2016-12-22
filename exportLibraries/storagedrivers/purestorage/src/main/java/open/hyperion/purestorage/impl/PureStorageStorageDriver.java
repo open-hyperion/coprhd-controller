@@ -154,8 +154,8 @@ public class PureStorageStorageDriver extends DefaultStorageDriver implements Bl
 
 			storageSystem.setFirmwareVersion(arrayRes.getRevision());
 
-			ArrayControllerCommandResult[] arrConComResArray = pureStorageAPI.getInfoForArrayControllers();
-			for (ArrayControllerCommandResult name : arrConComResArray) {
+			ArrayControllerCommandResult[] arrConComResArray = pureStorageAPI.getArrayControllerDetails();
+			for (ArrayControllerCommandResult arrConComRes : arrConComResArray) {
     			if (arrConComRes.getMode() != null &&
     				arrConComRes.getMode().trim().equalsIgnoreCase("primary")) {
     				storageSystem.setModel(arrConComRes.getModel().trim());

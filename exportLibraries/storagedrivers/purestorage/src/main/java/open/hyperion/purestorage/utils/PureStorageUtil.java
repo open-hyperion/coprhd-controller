@@ -40,6 +40,9 @@ import com.emc.storageos.storagedriver.model.StoragePort;
 import com.emc.storageos.storagedriver.model.StorageSystem;
 import com.emc.storageos.storagedriver.model.StoragePort.TransportType;
 
+import java.util.regex.Pattern;
+import java.util.regex.Matcher;
+
 public class PureStorageUtil {
 
 	private static final Logger _log = LoggerFactory.getLogger(PureStorageUtil.class);
