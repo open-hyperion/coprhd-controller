@@ -63,6 +63,12 @@ public class RESTClient {
                 .get(ClientResponse.class);
     }
 
+    public ClientResponse get_json(URI url) {
+        WebResource r = _client.resource(url);
+        return r.header("Content-Type", "application/json")
+                .get(ClientResponse.class);
+    }
+
     public ClientResponse put_json(URI url, String authToken, String body) {
         WebResource r = _client.resource(url);
         return r.header("Content-Type", "application/json")
