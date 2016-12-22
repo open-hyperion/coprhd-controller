@@ -139,7 +139,7 @@ public class PureStorageStorageDriver extends DefaultStorageDriver implements Bl
 			}
 
 			if (versionNumbers != null && versionNumbers.length >= 2) {
-				storageSystem.setMinorVersion(versionNumbers[1]);
+				storageSystem.setMinorVersion("" + versionNumbers[1]);
 			}
 			else {
 				storageSystem.setMinorVersion("UNKNOWN");

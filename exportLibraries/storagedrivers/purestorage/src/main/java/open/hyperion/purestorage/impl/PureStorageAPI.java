@@ -187,7 +187,7 @@ public class PureStorageAPI {
      * @return an array of controller details.
      * @throws Exception
      */
-    private ArrayControllerCommandResult[] getArrayControllerDetails () throws Exception {
+    public ArrayControllerCommandResult[] getArrayControllerDetails () throws Exception {
     	_log.info("PureStorageDriver:getArrayControllerDetails enter");
     	ClientResponse clientResp = null;
 
@@ -202,9 +202,9 @@ public class PureStorageAPI {
             } else {
                 String responseString = clientResp.getEntity(String.class);
                 _log.info("PureStorageDriver:getArrayControllerDetails Pure Storage response is {}", responseString);
-                ArrayControllerCommandResult[] arrConRes = new Gson().fromJson(sanitize(responseString),
+                ArrayControllerCommandResult[] arrConResArray = new Gson().fromJson(sanitize(responseString),
                     ArrayControllerCommandResult[].class);
-                return arrConRes;
+                return arrConResArray;
             }
     	} catch (Exception e) {
     		throw e;
