@@ -29,6 +29,7 @@ import com.sun.jersey.api.client.*;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Cookie;
 import javax.ws.rs.core.NewCookie;
+import java.util.List;
 /*
  * REST communication with Pure Storage storage device 
  */
@@ -64,10 +65,10 @@ public class RESTClient {
                 .get(ClientResponse.class);
     }
 
-    public ClientResponse get_json(URI url, Map<String,Cookie> cookies) {
+    public ClientResponse get_json(URI url, List<Cookie> cookies) {
         WebResource r = _client.resource(url);
         WebResource.Builder builder = r.getRequestBuilder();
-        cookies.forEach( (k,v) -> builder.cookie(v));
+        cookies.forEach((v) -> builder.cookie(v));
         return builder.header("Content-Type", "application/json")
                       .header("User-Agent","None")
                       .get(ClientResponse.class);

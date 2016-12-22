@@ -61,7 +61,7 @@ public class PureStorageAPI {
 	private String _authToken;
 	private String _user;
 	private String _password;
-	private Map<String,NewCookie> _cookies;
+	private List<NewCookie> _cookies;
 
     // Authentication
 	private static final URI URI_LOGIN   = URI.create("/api/1.6/auth/apitoken");
