@@ -69,12 +69,13 @@ import open.hyperion.purestorage.utils.CompleteError;
 import open.hyperion.purestorage.utils.PureStorageConstants;
 import open.hyperion.purestorage.utils.PureStorageUtil;
 import open.hyperion.purestorage.command.SystemCommandResult;
+import open.hyperion.purestorage.command.array.ArrayCommandResult;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
-
 
 /**
  * 
@@ -125,29 +126,39 @@ public class PureStorageStorageDriver extends DefaultStorageDriver implements Bl
 			}
 
 			// Verify user role
-			pureStorageAPI.verifyUserRole(storageSystem.getUsername());
+			//pureStorageAPI.verifyUserRole(storageSystem.getUsername());
 
 			// get storage details
-			SystemCommandResult systemRes = pureStorageAPI.getSystemDetails();
-			storageSystem.setSerialNumber(systemRes.getSerialNumber());
-			storageSystem.setMajorVersion(systemRes.getSystemVersion());
-			storageSystem.setMinorVersion("0"); // as there is no individual portion in PureStorage API
-			
+			ArrayCommandResult arrayRes = pureStorageAPI.getArrayDetails();
+			storageSystem.setSerialNumber(systemRes.getId());
+			storageSystem.setMajorVersion(systemRes.getVersion());
+			storageSystem.setMinorVersion(systemRes.getRevision());
+
 			// protocols supported
 			List<String> protocols = new ArrayList<String>();
 			protocols.add(Protocols.iSCSI.toString());
 			protocols.add(Protocols.FC.toString());
 			storageSystem.setProtocols(protocols);
 
-			storageSystem.setFirmwareVersion(systemRes.getSystemVersion());
+			storageSystem.setFirmwareVersion(systemRes.getRevision());
+			/*
 			if (systemRes.getSystemVersion().startsWith("3.1") || systemRes.getSystemVersion().startsWith("3.2.1") ) {
 			    // SDK is taking care of unsupported message
 			    storageSystem.setIsSupportedVersion(false);
 			} else {
 			    storageSystem.setIsSupportedVersion(true);
 			}
-			
-			storageSystem.setModel(systemRes.getModel());
+			*/
+
+			ArrayControllerCommandResult[] arrConComResArray = pureStorageAPI.getInfoForArrayControllers();
+			for (ArrayControllerCommandResult name : arrConComResArray) {
+    			if (arrConComRes.getMode() != null &&
+    				arrConComRes.getMode().trim().equalsIgnoreCase("primary")) {
+    				storageSystem.setModel(arrConComRes.getModel().trim());
+    				break;
+    			}
+  			}
+
 			storageSystem.setProvisioningType(SupportedProvisioningType.THIN_AND_THICK);
 			Set<StorageSystem.SupportedReplication> supportedReplications = new HashSet<>();
             supportedReplications.add(StorageSystem.SupportedReplication.elementReplica);
@@ -155,14 +166,14 @@ public class PureStorageStorageDriver extends DefaultStorageDriver implements Bl
 			storageSystem.setSupportedReplications(supportedReplications);
 
 			// Storage object properties
-			storageSystem.setNativeId(uniqueId + ":" + systemRes.getSerialNumber());
+			storageSystem.setNativeId(uniqueId + ":" + arrayRes.getSerialNumber());
 
 			if (storageSystem.getDeviceLabel() == null) {
 				if (storageSystem.getDisplayName() != null) {
 					storageSystem.setDeviceLabel(storageSystem.getDisplayName());
-				} else if (systemRes.getName() != null) {
-					storageSystem.setDeviceLabel(systemRes.getName());
-					storageSystem.setDisplayName(systemRes.getName());
+				} else if (arrayRes.getName() != null) {
+					storageSystem.setDeviceLabel(arrayRes.getName());
+					storageSystem.setDisplayName(arrayRes.getName());
 				}
 			}
 
@@ -171,10 +182,10 @@ public class PureStorageStorageDriver extends DefaultStorageDriver implements Bl
 					storageSystem.getPortNumber(), storageSystem.getUsername(), storageSystem.getPassword());
 
 			task.setStatus(DriverTask.TaskStatus.READY);
-			_log.info("PureStorageDriver: Successfull discovery storage system {}, name {} - end",
+			_log.info("PureStorageDriver:discoverStorageSystem Successfully discovered storage system {}, name {} - end",
 					storageSystem.getIpAddress(), storageSystem.getSystemName());
 		} catch (Exception e) {
-			String msg = String.format("PureStorageDriver: Unable to discover the storage system %s ip %s; Error: %s.\n",
+			String msg = String.format("PureStorageDriver:discoverStorageSystem Unable to discover the storage system %s ip %s; Error: %s.\n",
 					storageSystem.getSystemName(), storageSystem.getIpAddress(), e);
 			_log.error(msg);
 			_log.error(CompleteError.getStackTrace(e));

@@ -25,46 +25,38 @@
 package open.hyperion.purestorage.command;
 
 public class SystemCommandResult {
-    private String name;
-    private String systemVersion;
-    private String model;
-    private String serialNumber;
-    private String totalNodes;
+    private String array_name;
+    private String id;
+    private String revision;
+    private String version;
     
-    public String getName() {
-        return name;
+    public String getArray_Name() {
+        return this.array_name;
     }
-    public void setName(String name) {
-        this.name = name;
+    public void setArray_Name(String name) {
+        this.array_name = name;
     }
-    public String getSystemVersion() {
-        return systemVersion;
+    public String getId() {
+        return this.Id;
     }
-    public void setSystemVersion(String systemVersion) {
-        this.systemVersion = systemVersion;
+    public void setId(String id) {
+        this.id = id;
     }
-    public String getModel() {
-        return model;
+    public String getVersion() {
+        return this.version;
     }
-    public void setModel(String model) {
-        this.model = model;
+    public void setVersion(String version) {
+        this.version = version;
     }
-    public String getSerialNumber() {
-        return serialNumber;
+    public String getRevision() {
+        return revision;
     }
-    public void setSerialNumber(String serialNumber) {
-        this.serialNumber = serialNumber;
-    }
-    public String getTotalNodes() {
-        return totalNodes;
-    }
-    public void setTotalNodes(String totalNodes) {
-        this.totalNodes = totalNodes;
+    public void setRevision(String revision) {
+        this.revision = revision;
     }
     
     @Override
     public String toString() {
-        return "SystemCommandResult [name=" + name + ", systemVersion=" + systemVersion + ", model=" + model + ", serialNumber="
-                + serialNumber + ", totalNodes=" + totalNodes + "]";
+        return "SystemCommandResult [array_name=" + array_name +", id=" + id + ", version=" + version + ", revision=" + revision + "]";
     }
 }

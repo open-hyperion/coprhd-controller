@@ -46,6 +46,8 @@ import open.hyperion.purestorage.command.Privileges;
 import open.hyperion.purestorage.command.UserRoleCommandResult;
 import open.hyperion.purestorage.command.SystemCommandResult;
 
+import open.hyperion.purestorage.command.array.ArrayControllerCommandResult;
+import open.hyperion.purestorage.command.array.ArrayCommandResult;
 
 import static com.google.json.JsonSanitizer.*;
 
@@ -62,8 +64,8 @@ public class PureStorageAPI {
 	private static final URI URI_LOGIN   = URI.create("/api/1.6/auth/apitoken");
 	private static final URI URI_SESSION = URI.create("/api/1.6/auth/session");
 
-	private static final String URI_SYSTEM    = "/api/v1/system";
-	private static final String URI_USER_ROLE = "/api/v1/users/{0}";
+	private static final String URI_SYSTEM    = "/api/1.6/array";
+	private static final String URI_USER_ROLE = "/api/1.6/admin/{0}";
 
 
 	public PureStorageAPI(URI baseURL, RESTClient client, String username, String password) {
@@ -107,6 +109,13 @@ public class PureStorageAPI {
 				_user = username;
 				_password = password;
 				_log.info("PureStorageDriver:getAuthToken set");
+
+				_log.info("PureStorageDriver:getAuthToken create session");
+
+
+
+
+				_log.info("PureStorageDriver:getAuthToken session created");
 			}
 			return authToken;
 		} catch (Exception e) {
@@ -179,17 +188,27 @@ public class PureStorageAPI {
         final String path = MessageFormat.format(URI_USER_ROLE, name);
         _log.info("PureStorageDriver: verifyUserRole path is {}", path);
 
+        String body= "{\"api_token\":\"" + _authToken + "\"}";
+
         try {
-            clientResp = get(path);
+
+            clientResp = _client.post_json(path, body);
+
             if (clientResp == null) {
-                _log.error("PureStorageDriver:There is no response from 3PAR");
-                throw new PureStorageException("There is no response from 3PAR");
+                _log.error("PureStorageDriver:There is no response from Pure Storage");
+                throw new PureStorageException("There is no response from Pure Storage");
             } else if (clientResp.getStatus() != 200) {
                 String errResp = getResponseDetails(clientResp);
                 throw new PureStorageException(errResp);
             } else {
                 String responseString = clientResp.getEntity(String.class);
-                _log.info("PureStorageDriver:getSystemDetails 3PAR response is {}", responseString);
+
+                JSONObject jObj = clientResp.getEntity(JSONObject.class);
+                authTokenUsername = jObj.getString("username");
+
+
+
+                _log.info("PureStorageDriver:getSystemDetails Pure Storage response is {}", responseString);
                 UserRoleCommandResult roleRes = new Gson().fromJson(sanitize(responseString),
                         UserRoleCommandResult.class);
 
@@ -220,29 +239,64 @@ public class PureStorageAPI {
         } //end try/catch/finally
     }
 
+
     /**
-     * Gets the storage array information
-     * @return array details
+     * Gets the list of array controllers and their respective details
+     * @return an array of controller details.
      * @throws Exception
      */
-    public SystemCommandResult getSystemDetails() throws Exception {
-        _log.info("PureStorageDriver:getSystemDetails enter");
-        ClientResponse clientResp = null;
+    private ArrayControllerCommandResult[] getArrayControllerDetails () throws Exception {
+    	_log.info("PureStorageDriver:getArrayControllerDetails enter");
+    	ClientResponse clientResp = null;
 
-        try {
-            clientResp = get(URI_SYSTEM);
+    	try {
+    		clientResp = get(URI_SYSTEM + "?controllers=true");
             if (clientResp == null) {
-                _log.error("PureStorageDriver:There is no response from Pure Storage");
+                _log.error("PureStorageDriver:getArrayControllerDetails There is no response from Pure Storage");
                 throw new PureStorageException("There is no response from Pure Storage");
             } else if (clientResp.getStatus() != 200) {
                 String errResp = getResponseDetails(clientResp);
                 throw new PureStorageException(errResp);
             } else {
                 String responseString = clientResp.getEntity(String.class);
-                _log.info("PureStorageDriver:getSystemDetails Pure Storage response is {}", responseString);
-                SystemCommandResult systemRes = new Gson().fromJson(sanitize(responseString),
-                        SystemCommandResult.class);
-                return systemRes;
+                _log.info("PureStorageDriver:getArrayControllerDetails Pure Storage response is {}", responseString);
+                ArrayControllerCommandResult[] arrConRes = new Gson().fromJson(sanitize(responseString),
+                    ArrayControllerCommandResult[].class);
+                return arrConRes;
+            }
+    	} catch (Exception e) {
+    		throw e;
+    	} finally {
+    		if (clientResp != null) {
+    			clientResp.close();
+    		}
+    		_log.info("PureStorageDriver:getArrayControllerDetails leave");
+    	} //end try/catch/finally
+    }
+
+    /**
+     * Gets the storage array information
+     * @return array details
+     * @throws Exception
+     */
+    public ArrayCommandResult getArrayDetails() throws Exception {
+        _log.info("PureStorageDriver:getArrayDetails enter");
+        ClientResponse clientResp = null;
+
+        try {
+            clientResp = get(URI_SYSTEM);
+            if (clientResp == null) {
+                _log.error("PureStorageDriver:getArrayDetails There is no response from Pure Storage");
+                throw new PureStorageException("There is no response from Pure Storage");
+            } else if (clientResp.getStatus() != 200) {
+                String errResp = getResponseDetails(clientResp);
+                throw new PureStorageException(errResp);
+            } else {
+                String responseString = clientResp.getEntity(String.class);
+                _log.info("PureStorageDriver:getArrayDetails Pure Storage response is {}", responseString);
+                ArrayCommandResult arrayRes = new Gson().fromJson(sanitize(responseString),
+                    ArrayCommandResult.class);
+                return arrayRes;
             }
         } catch (Exception e) {
             throw e;
@@ -250,7 +304,7 @@ public class PureStorageAPI {
             if (clientResp != null) {
                 clientResp.close();
             }
-            _log.info("PureStorageDriver:getSystemDetails leave");
+            _log.info("PureStorageDriver:getArrayDetails leave");
         } //end try/catch/finally
     }
 
