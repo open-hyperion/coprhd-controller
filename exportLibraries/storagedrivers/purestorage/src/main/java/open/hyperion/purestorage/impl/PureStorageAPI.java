@@ -28,8 +28,10 @@ import java.net.URI;
 import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 import javax.ws.rs.core.MultivaluedMap;
+import javax.ws.rs.core.NewCookie;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -59,6 +61,7 @@ public class PureStorageAPI {
 	private String _authToken;
 	private String _user;
 	private String _password;
+	private Map<String,NewCookie> _cookies;
 
     // Authentication
 	private static final URI URI_LOGIN   = URI.create("/api/1.6/auth/apitoken");
@@ -165,6 +168,8 @@ public class PureStorageAPI {
 		try {
 			clientResp = _client.post_json(_baseURL.resolve(URI_SESSION), body);
 			_log.info(clientResp.toString());
+
+			_cookies = clientResp.getCookies();
 			if (clientResp == null) {
 				_log.error("PureStorageDriver:createSession There is no response from PureStorage");
 				throw new PureStorageException("There is no response from PureStorage");
@@ -292,8 +297,8 @@ public class PureStorageAPI {
 
     private ClientResponse getUseSession(final String uri) throws Exception {
         
-    	_log.info("####Resolving URI:" +_baseURL.resolve(uri).toString());
-        ClientResponse clientResp = _client.get_json(_baseURL.resolve(uri));
+    	_log.info("####Resolving URI:" +_baseURL.resolve(uri).toString() + " There are " + _cookies.keySet().size());
+        ClientResponse clientResp = _client.get_json(_baseURL.resolve(uri), _cookies);
         /*if (clientResp.getStatus() == 403) {
             getAuthToken();
             clientResp = _client.get_json(_baseURL.resolve(uri));

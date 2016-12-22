@@ -27,7 +27,8 @@ package open.hyperion.purestorage.connection;
 import java.net.URI;
 import com.sun.jersey.api.client.*;
 import javax.ws.rs.core.MediaType;
-
+import javax.ws.rs.core.Cookie;
+import javax.ws.rs.core.NewCookie;
 /*
  * REST communication with Pure Storage storage device 
  */
@@ -61,6 +62,15 @@ public class RESTClient {
         return r.header("Content-Type", "application/json")
                 .header("User-Agent","None")
                 .get(ClientResponse.class);
+    }
+
+    public ClientResponse get_json(URI url, Map<String,Cookie> cookies) {
+        WebResource r = _client.resource(url);
+        WebResource.Builder builder = r.getRequestBuilder();
+        cookies.forEach( (k,v) -> builder.cookie(v));
+        return builder.header("Content-Type", "application/json")
+                      .header("User-Agent","None")
+                      .get(ClientResponse.class);
     }
 
     public ClientResponse get_json(URI url) {
