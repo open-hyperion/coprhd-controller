@@ -182,64 +182,6 @@ public class PureStorageAPI {
         return detailedResponse;
     }
 
-    public void verifyUserRole(String name) throws Exception {
-        _log.info("PureStorageDriver:verifyUserRole enter");
-        ClientResponse clientResp = null;
-        final String path = MessageFormat.format(URI_USER_ROLE, name);
-        _log.info("PureStorageDriver: verifyUserRole path is {}", path);
-
-        String body= "{\"api_token\":\"" + _authToken + "\"}";
-
-        try {
-
-            clientResp = _client.post_json(path, body);
-
-            if (clientResp == null) {
-                _log.error("PureStorageDriver:There is no response from Pure Storage");
-                throw new PureStorageException("There is no response from Pure Storage");
-            } else if (clientResp.getStatus() != 200) {
-                String errResp = getResponseDetails(clientResp);
-                throw new PureStorageException(errResp);
-            } else {
-                String responseString = clientResp.getEntity(String.class);
-
-                JSONObject jObj = clientResp.getEntity(JSONObject.class);
-                authTokenUsername = jObj.getString("username");
-
-
-
-                _log.info("PureStorageDriver:getSystemDetails Pure Storage response is {}", responseString);
-                UserRoleCommandResult roleRes = new Gson().fromJson(sanitize(responseString),
-                        UserRoleCommandResult.class);
-
-                boolean superUser = false;
-                for (Privileges currPriv:roleRes.getPrivileges()) {
-
-                    if ( (currPriv.getDomain().compareToIgnoreCase("all") == 0) && 
-                            (currPriv.getRole().compareToIgnoreCase("super") == 0)) {
-                        superUser = true;
-                    }
-                }
-                
-                if (superUser == false) {
-                    _log.error("PureStorageDriver:User does not have sufficient privilege to discover");
-                    throw new PureStorageException("User does not have sufficient privilege");
-                } else {
-                    _log.info("PureStorageDriver:User is super user");
-                }
-                
-            }
-        } catch (Exception e) {
-            throw e;
-        } finally {
-            if (clientResp != null) {
-                clientResp.close();
-            }
-            _log.info("PureStorageDriver:verifyUserRole leave");
-        } //end try/catch/finally
-    }
-
-
     /**
      * Gets the list of array controllers and their respective details
      * @return an array of controller details.

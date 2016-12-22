@@ -37,7 +37,7 @@ public class SystemCommandResult {
         this.array_name = name;
     }
     public String getId() {
-        return this.Id;
+        return this.id;
     }
     public void setId(String id) {
         this.id = id;
@@ -57,6 +57,6 @@ public class SystemCommandResult {
     
     @Override
     public String toString() {
-        return "SystemCommandResult [array_name=" + array_name +", id=" + id + ", version=" + version + ", revision=" + revision + "]";
+        return "SystemCommandResult [array_name=" + this.array_name + ", id=" + this.id + ", version=" + this.version + ", revision=" + this.revision + "]";
     }
 }

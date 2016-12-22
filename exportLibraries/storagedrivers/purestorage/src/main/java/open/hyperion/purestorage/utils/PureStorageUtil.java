@@ -83,4 +83,16 @@ public class PureStorageUtil {
 		_pureStorageAPIFactory = pureStorageAPIFactory;
 	}
 
+	private static int[] getVersionNumbers(String ver) {
+    	Matcher m = Pattern.compile("(\\d+)\\.(\\d+)\\.(\\d+)?")
+                       .matcher(ver);
+    	
+    	if (!m.matches()) {
+        	throw new IllegalArgumentException("Malformed Pure Storage array version");
+    	}
+
+    	return new int[] {Integer.parseInt(m.group(1)), // major
+            Integer.parseInt(m.group(2)),               // minor
+            Integer.parseInt(m.group(3)))};             // rev.
+	}
 }

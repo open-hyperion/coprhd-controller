@@ -41,7 +41,7 @@ public class ArrayCommandResult {
         this.arrayName = arrayName;
     }
     public String getId() {
-        return this.Id;
+        return this.id;
     }
     public void setId(String id) {
         this.id = id;
@@ -61,6 +61,6 @@ public class ArrayCommandResult {
     
     @Override
     public String toString() {
-        return "ArrayCommandResult [array_name=" + array_name +", id=" + id + ", version=" + version + ", revision=" + revision + "]";
+        return "ArrayCommandResult [arrayName=" + this.arrayName + ", id=" + this.id + ", version=" + this.version + ", revision=" + this.revision + "]";
     }
 }

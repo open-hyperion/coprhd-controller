@@ -125,14 +125,24 @@ public class PureStorageStorageDriver extends DefaultStorageDriver implements Bl
 				throw new PureStorageException("Could not get authentication token");
 			}
 
-			// Verify user role
-			//pureStorageAPI.verifyUserRole(storageSystem.getUsername());
-
 			// get storage details
 			ArrayCommandResult arrayRes = pureStorageAPI.getArrayDetails();
-			storageSystem.setSerialNumber(systemRes.getId());
-			storageSystem.setMajorVersion(systemRes.getVersion());
-			storageSystem.setMinorVersion(systemRes.getRevision());
+			storageSystem.setSerialNumber(arrayRes.getId());
+			int[] versionNumbers = PureStorageUtil.getVersionNumbers(arrayRes.getVersion());
+			
+			if (versionNumbers != null && versionNumbers.length >= 1) {
+				storageSystem.setMajorVersion("" + versionNumbers[0]);
+			}
+			else {
+				storageSystem.setMajorVersion("UNKNOWN");
+			}
+
+			if (versionNumbers != null && versionNumbers.length >= 2) {
+				storageSystem.setMinorVersion(versionNumbers[1]);
+			}
+			else {
+				storageSystem.setMinorVersion("UNKNOWN");
+			}
 
 			// protocols supported
 			List<String> protocols = new ArrayList<String>();
@@ -140,15 +150,7 @@ public class PureStorageStorageDriver extends DefaultStorageDriver implements Bl
 			protocols.add(Protocols.FC.toString());
 			storageSystem.setProtocols(protocols);
 
-			storageSystem.setFirmwareVersion(systemRes.getRevision());
-			/*
-			if (systemRes.getSystemVersion().startsWith("3.1") || systemRes.getSystemVersion().startsWith("3.2.1") ) {
-			    // SDK is taking care of unsupported message
-			    storageSystem.setIsSupportedVersion(false);
-			} else {
-			    storageSystem.setIsSupportedVersion(true);
-			}
-			*/
+			storageSystem.setFirmwareVersion(arrayRes.getRevision());
 
 			ArrayControllerCommandResult[] arrConComResArray = pureStorageAPI.getInfoForArrayControllers();
 			for (ArrayControllerCommandResult name : arrConComResArray) {
@@ -166,14 +168,14 @@ public class PureStorageStorageDriver extends DefaultStorageDriver implements Bl
 			storageSystem.setSupportedReplications(supportedReplications);
 
 			// Storage object properties
-			storageSystem.setNativeId(uniqueId + ":" + arrayRes.getSerialNumber());
+			storageSystem.setNativeId(uniqueId + ":" + arrayRes.getId());
 
 			if (storageSystem.getDeviceLabel() == null) {
 				if (storageSystem.getDisplayName() != null) {
 					storageSystem.setDeviceLabel(storageSystem.getDisplayName());
 				} else if (arrayRes.getName() != null) {
-					storageSystem.setDeviceLabel(arrayRes.getName());
-					storageSystem.setDisplayName(arrayRes.getName());
+					storageSystem.setDeviceLabel(arrayRes.getArrayName());
+					storageSystem.setDisplayName(arrayRes.getArrayName());
 				}
 			}
 
@@ -228,5 +230,4 @@ public class PureStorageStorageDriver extends DefaultStorageDriver implements Bl
 		this.driverRegistry.setDriverAttributesForKey(PureStorageConstants.DRIVER_NAME, systemNativeId, attributes);
 		_log.info("PureStorageDriver:Saving connection info in registry leave");
 	}
-
 }
