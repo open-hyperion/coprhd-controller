@@ -109,13 +109,6 @@ public class PureStorageAPI {
 				_user = username;
 				_password = password;
 				_log.info("PureStorageDriver:getAuthToken set");
-
-				_log.info("PureStorageDriver:getAuthToken create session");
-
-
-
-
-				_log.info("PureStorageDriver:getAuthToken session created");
 			}
 			return authToken;
 		} catch (Exception e) {
@@ -197,7 +190,7 @@ public class PureStorageAPI {
 			if (clientResp != null) {
 				clientResp.close();
 			}
-			_log.info("PureStorageDriver:getSession leave");
+			_log.info("PureStorageDriver:createSession leave");
 		} //end try/catch/finally
     }
 
