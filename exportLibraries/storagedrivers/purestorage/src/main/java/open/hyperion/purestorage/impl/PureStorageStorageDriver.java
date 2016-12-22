@@ -143,7 +143,8 @@ public class PureStorageStorageDriver extends DefaultStorageDriver implements Bl
 			else {
 				storageSystem.setMinorVersion("UNKNOWN");
 			}
-
+			storageSystem.setIsSupportedVersion(true);
+			
 			// protocols supported
 			List<String> protocols = new ArrayList<String>();
 			protocols.add(Protocols.iSCSI.toString());

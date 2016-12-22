@@ -93,6 +93,6 @@ public class PureStorageUtil {
 
     	return new int[] {Integer.parseInt(m.group(1)), // major
             Integer.parseInt(m.group(2)),               // minor
-            Integer.parseInt(m.group(3)))};             // rev.
+            Integer.parseInt(m.group(3))};              // rev.
 	}
 }
