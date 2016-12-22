@@ -223,7 +223,7 @@ public class PureStorageAPI {
     	ClientResponse clientResp = null;
 
     	try {
-    		clientResp = get(URI_SYSTEM + "?controllers=true");
+    		clientResp = getUseSession(URI_SYSTEM + "?controllers=true");
             if (clientResp == null) {
                 _log.error("PureStorageDriver:getArrayControllerDetails There is no response from Pure Storage");
                 throw new PureStorageException("There is no response from Pure Storage");
@@ -257,7 +257,7 @@ public class PureStorageAPI {
         ClientResponse clientResp = null;
 
         try {
-            clientResp = get(URI_SYSTEM);
+            clientResp = getUseSession(URI_SYSTEM);
             if (clientResp == null) {
                 _log.error("PureStorageDriver:getArrayDetails There is no response from Pure Storage");
                 throw new PureStorageException("There is no response from Pure Storage");
@@ -287,6 +287,17 @@ public class PureStorageAPI {
             getAuthToken();
             clientResp = _client.get_json(_baseURL.resolve(uri), _authToken);
         }
+        return clientResp;
+    }
+
+    private ClientResponse getUseSession(final String uri) throws Exception {
+        
+    	_log.info("####Resolving URI:" +_baseURL.resolve(uri).toString());
+        ClientResponse clientResp = _client.get_json(_baseURL.resolve(uri));
+        /*if (clientResp.getStatus() == 403) {
+            getAuthToken();
+            clientResp = _client.get_json(_baseURL.resolve(uri));
+        }*/
         return clientResp;
     }
     
