@@ -70,6 +70,7 @@ import open.hyperion.purestorage.utils.PureStorageConstants;
 import open.hyperion.purestorage.utils.PureStorageUtil;
 import open.hyperion.purestorage.command.SystemCommandResult;
 import open.hyperion.purestorage.command.array.ArrayCommandResult;
+import open.hyperion.purestorage.command.array.ArrayControllerCommandResult;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -174,7 +175,7 @@ public class PureStorageStorageDriver extends DefaultStorageDriver implements Bl
 			if (storageSystem.getDeviceLabel() == null) {
 				if (storageSystem.getDisplayName() != null) {
 					storageSystem.setDeviceLabel(storageSystem.getDisplayName());
-				} else if (arrayRes.getName() != null) {
+				} else if (arrayRes.getArrayName() != null) {
 					storageSystem.setDeviceLabel(arrayRes.getArrayName());
 					storageSystem.setDisplayName(arrayRes.getArrayName());
 				}

@@ -83,7 +83,7 @@ public class PureStorageUtil {
 		_pureStorageAPIFactory = pureStorageAPIFactory;
 	}
 
-	private static int[] getVersionNumbers(String ver) {
+	public static int[] getVersionNumbers(String ver) {
     	Matcher m = Pattern.compile("(\\d+)\\.(\\d+)\\.(\\d+)?")
                        .matcher(ver);
     	
