@@ -163,6 +163,44 @@ public class PureStorageAPI {
         } //end try/catch/finally
     }
 
+    public String createSession() throws Exception {
+		_log.info("PureStorage:createSession enter");
+
+		String username = null;
+		ClientResponse clientResp = null;
+		String body = "{\"api_token\":\"" + _authToken + "\"}";
+		try {
+			clientResp = _client.post_json(_baseURL.resolve(URI_SESSION), body);
+			_log.info(clientResp.toString());
+			if (clientResp == null) {
+				_log.error("PureStorageDriver:createSession There is no response from PureStorage");
+				throw new PureStorageException("There is no response from PureStorage");
+			} else if (clientResp.getStatus() != 200) {
+				String errResp = getResponseDetails(clientResp);
+				throw new PureStorageException(errResp);
+			} else {
+				JSONObject jObj = clientResp.getEntity(JSONObject.class);
+				username = jObj.getString("username");
+
+				if (_user.equals(username)) {
+					_log.info("PureStorageDriver:createSession session created");
+				}
+				else {
+					_log.error("PureStorageDriver:createSession Session not created.  Names do not match.");
+					throw new PureStorageException("PureStorageDriver:createSession Session not created.  Names do not match.  " + _user + " =/= " + username);	
+				}
+			}
+			return authToken;
+		} catch (Exception e) {
+			throw e;
+		} finally {
+			if (clientResp != null) {
+				clientResp.close();
+			}
+			_log.info("PureStorageDriver:getSession leave");
+		} //end try/catch/finally
+    }
+
     private String getResponseDetails(ClientResponse clientResp) {
         String detailedResponse = null, ref=null;
         try {
