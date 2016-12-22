@@ -65,7 +65,7 @@ public class RESTClient {
                 .get(ClientResponse.class);
     }
 
-    public ClientResponse get_json(URI url, List<Cookie> cookies) {
+    public ClientResponse get_json(URI url, List<NewCookie> cookies) {
         WebResource r = _client.resource(url);
         WebResource.Builder builder = r.getRequestBuilder();
         cookies.forEach((v) -> builder.cookie(v));

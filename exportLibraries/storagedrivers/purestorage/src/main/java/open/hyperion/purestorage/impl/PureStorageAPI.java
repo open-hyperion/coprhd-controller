@@ -297,7 +297,7 @@ public class PureStorageAPI {
 
     private ClientResponse getUseSession(final String uri) throws Exception {
         
-    	_log.info("####Resolving URI:" +_baseURL.resolve(uri).toString() + " There are " + _cookies.keySet().size());
+    	_log.info("####Resolving URI:" +_baseURL.resolve(uri).toString() + " There are " + _cookies.size());
         ClientResponse clientResp = _client.get_json(_baseURL.resolve(uri), _cookies);
         /*if (clientResp.getStatus() == 403) {
             getAuthToken();
