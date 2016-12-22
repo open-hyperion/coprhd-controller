@@ -190,7 +190,7 @@ public class PureStorageAPI {
 					throw new PureStorageException("PureStorageDriver:createSession Session not created.  Names do not match.  " + _user + " =/= " + username);	
 				}
 			}
-			return authToken;
+			return username;
 		} catch (Exception e) {
 			throw e;
 		} finally {
