@@ -126,7 +126,7 @@ public class PureStorageStorageDriver extends DefaultStorageDriver implements Bl
 				throw new PureStorageException("Could not get authentication token");
 			}
 			else { // start the session
-				PureStorageAPI.createSession();
+				pureStorageAPI.createSession();
 			}
 
 			// get storage details
