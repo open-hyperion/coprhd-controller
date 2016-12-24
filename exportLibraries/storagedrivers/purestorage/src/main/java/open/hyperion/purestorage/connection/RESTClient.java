@@ -57,6 +57,15 @@ public class RESTClient {
                 .header("User-Agent","None")
                 .post(ClientResponse.class, body);
     }
+
+    public ClientResponse post_json(URI url, List<NewCookie> cookies, String body) {
+        WebResource r = _client.resource(url);
+        WebResource.Builder builder = r.getRequestBuilder();
+        cookies.forEach((v) -> builder.cookie(v));
+        return builder.header("Content-Type", "application/json")
+                      .header("User-Agent","None")
+                      .post(ClientResponse.class, body);
+    }
     
     public ClientResponse get_json(URI url, String authToken) {
         WebResource r = _client.resource(url);
@@ -87,11 +96,29 @@ public class RESTClient {
                 .put(ClientResponse.class, body);
     }
 
+    public ClientResponse put_json(URI url, List<NewCookie> cookies, String body) {
+        WebResource r = _client.resource(url);
+        WebResource.Builder builder = r.getRequestBuilder();
+        cookies.forEach((v) -> builder.cookie(v));
+        return builder.header("Content-Type", "application/json")
+                      .header("User-Agent","None")
+                      .put(ClientResponse.class, body);
+    }
+
     public ClientResponse delete_json(URI url, String authToken) {
         WebResource r = _client.resource(url);
         return r.header("Content-Type", "application/json")
                 .header("User-Agent","None")
                 .delete(ClientResponse.class);
+    }
+
+    public ClientResponse delete_json(URI url, List<NewCookie> cookies) {
+        WebResource r = _client.resource(url);
+        WebResource.Builder builder = r.getRequestBuilder();
+        cookies.forEach((v) -> builder.cookie(v));
+        return builder.header("Content-Type", "application/json")
+                      .header("User-Agent","None")
+                      .delete(ClientResponse.class);
     }
 
     /**

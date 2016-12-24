@@ -228,7 +228,7 @@ public class PureStorageAPI {
     	ClientResponse clientResp = null;
 
     	try {
-    		clientResp = getUseSession(URI_SYSTEM + "?controllers=true");
+    		clientResp = getUsingSession(URI_SYSTEM + "?controllers=true");
             if (clientResp == null) {
                 _log.error("PureStorageDriver:getArrayControllerDetails There is no response from Pure Storage");
                 throw new PureStorageException("There is no response from Pure Storage");
@@ -262,7 +262,7 @@ public class PureStorageAPI {
         ClientResponse clientResp = null;
 
         try {
-            clientResp = getUseSession(URI_SYSTEM);
+            clientResp = getUsingSession(URI_SYSTEM);
             if (clientResp == null) {
                 _log.error("PureStorageDriver:getArrayDetails There is no response from Pure Storage");
                 throw new PureStorageException("There is no response from Pure Storage");
@@ -295,14 +295,14 @@ public class PureStorageAPI {
         return clientResp;
     }
 
-    private ClientResponse getUseSession(final String uri) throws Exception {
+    private ClientResponse getUsingSession(final String uri) throws Exception {
         
-    	_log.info("####Resolving URI:" +_baseURL.resolve(uri).toString() + " There are " + _cookies.size());
         ClientResponse clientResp = _client.get_json(_baseURL.resolve(uri), _cookies);
-        /*if (clientResp.getStatus() == 403) {
+        if (clientResp.getStatus() == 403) {
             getAuthToken();
-            clientResp = _client.get_json(_baseURL.resolve(uri));
-        }*/
+            createSession();
+            clientResp = _client.get_json(_baseURL.resolve(uri), _cookies);
+        }
         return clientResp;
     }
     
@@ -311,6 +311,16 @@ public class PureStorageAPI {
         if (clientResp.getStatus() == 403) {
             getAuthToken();
             clientResp = _client.post_json(_baseURL.resolve(uri), _authToken, body);
+        }
+        return clientResp;
+    }
+
+    private ClientResponse postUsingSession(final String uri, String body) throws Exception {
+        ClientResponse clientResp = _client.post_json(_baseURL.resolve(uri), _cookies, body);
+        if (clientResp.getStatus() == 403) {
+            getAuthToken();
+            createSession();
+            clientResp = _client.post_json(_baseURL.resolve(uri), _cookies, body);
         }
         return clientResp;
     }
@@ -323,12 +333,32 @@ public class PureStorageAPI {
         }
         return clientResp;
     }
+
+    private ClientResponse putUsingSession(final String uri, String body) throws Exception {
+        ClientResponse clientResp = _client.put_json(_baseURL.resolve(uri), _cookies, body);
+        if (clientResp.getStatus() == 403) {
+            getAuthToken();
+            createSession();
+            clientResp = _client.put_json(_baseURL.resolve(uri), _cookies, body);
+        }
+        return clientResp;
+    }
     
     private ClientResponse delete(final String uri) throws Exception {
         ClientResponse clientResp = _client.delete_json(_baseURL.resolve(uri), _authToken);
         if (clientResp.getStatus() == 403) {
             getAuthToken();
             clientResp = _client.delete_json(_baseURL.resolve(uri), _authToken);
+        }
+        return clientResp;
+    }        
+
+    private ClientResponse deleteUsingSession(final String uri) throws Exception {
+        ClientResponse clientResp = _client.delete_json(_baseURL.resolve(uri), _cookies);
+        if (clientResp.getStatus() == 403) {
+            getAuthToken();
+            createSession();
+            clientResp = _client.delete_json(_baseURL.resolve(uri), _cookies);
         }
         return clientResp;
     }        
