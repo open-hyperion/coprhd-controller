@@ -302,7 +302,7 @@ public class PureStorageAPI {
     		if (clientResp == null) {
                 _log.error("PureStorageDriver:getSpaceDetails There is no response from Pure Storage");
                 throw new PureStorageException("There is no response from Pure Storage");
-    		} else if () {
+    		} else if (clientResp.getStatus() != 200) {
                 String errResp = getResponseDetails(clientResp);
                 throw new PureStorageException(errResp);
     		} else {
