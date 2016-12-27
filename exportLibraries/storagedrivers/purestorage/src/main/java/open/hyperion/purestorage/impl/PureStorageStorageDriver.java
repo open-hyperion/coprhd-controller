@@ -209,21 +209,12 @@ public class PureStorageStorageDriver extends DefaultStorageDriver implements Bl
 
 		return task;
 	}
-/*
+
     @Override
     public DriverTask discoverStorageProvider(StorageProvider storageProvider, List<StorageSystem> storageSystems) {
-        String driverName = this.getClass().getSimpleName();
-        String taskId = String.format("%s+%s+%s", driverName, "discover-storage-provider", UUID.randomUUID().toString());
-        DriverTask task = new DefaultDriverTask(taskId);
-        task.setStatus(DriverTask.TaskStatus.FAILED);
-
-        String msg = String.format("%s: %s --- operation is not supported.", driverName, "discoverStorageProvider");
-        _log.warn(msg);
-        task.setMessage(msg);
 
         return null;
     }
-*/
 
 // 2. Usage
 /*
