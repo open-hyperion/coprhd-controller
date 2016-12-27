@@ -124,6 +124,6 @@ public class ArraySpaceCommandResult {
 
     @Override
     public String toString() {
-        return "ArraySpaceCommandResult [capacity=" + capacity +", dataReduction=" + dataReduction + ", hostName=" + hostName + ", sharedSpace=" + sharedSpace + ", snapshots=" + snapshots + ", volumes=" + volumes + ", total=" + total + ", thinProvisioning=" + thinProvisioning + ", totalReduction=" + totalReduction + "]";
+        return "ArraySpaceCommandResult [capacity=" + _capacity +", dataReduction=" + _dataReduction + ", hostName=" + _hostName + ", sharedSpace=" + _sharedSpace + ", snapshots=" + _snapshots + ", volumes=" + _volumes + ", total=" + _total + ", thinProvisioning=" + _thinProvisioning + ", totalReduction=" + _totalReduction + "]";
     }    
 }
