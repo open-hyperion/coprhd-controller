@@ -57,7 +57,9 @@ public class PureStorageUtil {
 			_log.info("pureStorageSystem.getIpAddress(): " + pureStorageSystem.getIpAddress());
 			_log.info("pureStorageSystem.getPortNumber(): " + pureStorageSystem.getPortNumber());
 
-			deviceURI = new URI("https", null, pureStorageSystem.getIpAddress(), pureStorageSystem.getPortNumber(), "/", null,
+//			deviceURI = new URI("https", null, pureStorageSystem.getIpAddress(), pureStorageSystem.getPortNumber(), "/", null,
+//					null);
+			deviceURI = new URI("https", null, pureStorageSystem.getIpAddress(), 443, "/", null,
 					null);
 			return _pureStorageAPIFactory.getRESTClient(deviceURI, pureStorageSystem.getUsername(), pureStorageSystem.getPassword());
 		} catch (Exception e) {
