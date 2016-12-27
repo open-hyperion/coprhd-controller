@@ -65,6 +65,7 @@ import com.emc.storageos.storagedriver.storagecapabilities.CapabilityInstance;
 import com.emc.storageos.storagedriver.storagecapabilities.DeduplicationCapabilityDefinition;
 import com.emc.storageos.storagedriver.storagecapabilities.StorageCapabilities;
 
+import open.hyperion.purestorage.connection.PureStorageAPIFactory;
 import open.hyperion.purestorage.impl.PureStorageAPI;
 import open.hyperion.purestorage.utils.CompleteError;
 import open.hyperion.purestorage.utils.PureStorageConstants;
@@ -220,8 +221,8 @@ public class PureStorageStorageDriver extends DefaultStorageDriver implements Bl
 		_log.info("PureStorageDriver:discoverStorageProvider enter");
 		try {
 			
-			_log.info("storageProvider.getProviderHost(): " + pureStorageSystem.getProviderHost());
-			_log.info("storageProvider.getPortNumber(): " + pureStorageSystem.getPortNumber());
+			_log.info("storageProvider.getProviderHost(): " + storageProvider.getProviderHost());
+			_log.info("storageProvider.getPortNumber(): " + storageProvider.getPortNumber());
 			_log.info("storageSystems size: " + storageSystems.size());
 
 
