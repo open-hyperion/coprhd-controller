@@ -269,7 +269,6 @@ the "storage pools" information from the and "storagePools" instance.
         	_storagePool.setStorageSystemId(storageSystem.getSerialNumber());
         	_protocols.add(Protocols.FC);
         	_storagePool.setProtocols(_protocols);
-        	Long.valueOf(arraySpcRes);
         	_storagePool.setTotalCapacity(Long.valueOf(arraySpcRes.getCapacity()));
         	long freeCap = Long.valueOf(arraySpcRes.getCapacity()).longValue() - Long.valueOf(arraySpcRes.getTotal()).longValue();
         	_storagePool.setFreeCapacity(freeCap);
