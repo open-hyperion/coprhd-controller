@@ -58,7 +58,7 @@ public class ArraySpaceCommandResult {
         return snapshots;
     }
 
-    private String _volumes;
+    private String volumes;
 
     public void setVolumes (String volumes) {
         this.volumes = volumes;

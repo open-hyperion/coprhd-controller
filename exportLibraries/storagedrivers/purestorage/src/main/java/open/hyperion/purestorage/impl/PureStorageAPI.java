@@ -313,7 +313,7 @@ public class PureStorageAPI {
                     ArraySpaceCommandResult.class);
                 return arraySpRes;
     		}
-    	} catch (Exeception e) {
+    	} catch (Exception e) {
     		throw e;
     	} finally {
             if (clientResp != null) {
