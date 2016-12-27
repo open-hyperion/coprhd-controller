@@ -206,7 +206,7 @@ public class PureStorageStorageDriver extends DefaultStorageDriver implements Bl
 
 		return task;
 	}
-
+/*
     @Override
     public DriverTask discoverStorageProvider(StorageProvider storageProvider, List<StorageSystem> storageSystems) {
         String driverName = this.getClass().getSimpleName();
@@ -217,8 +217,10 @@ public class PureStorageStorageDriver extends DefaultStorageDriver implements Bl
         String msg = String.format("%s: %s --- operation is not supported.", driverName, "discoverStorageProvider");
         _log.warn(msg);
         task.setMessage(msg);
+
         return null;
     }
+*/
 
 // 2. Usage
 /*
@@ -307,6 +309,7 @@ the "storage pools" information from the and "storagePools" instance.
         return task;
     }
 
+/*
     @Override
     public DriverTask discoverStoragePorts(StorageSystem storageSystem, List<StoragePort> storagePorts) {
         String driverName = this.getClass().getSimpleName();
@@ -360,7 +363,8 @@ the "storage pools" information from the and "storagePools" instance.
         task.setMessage(msg);
         return null;
     }
-
+*/
+    
 /*
     @Override
     public DriverTask getStorageVolumes(StorageSystem storageSystem, List<StorageVolume> storageVolumes, MutableInt token) {
@@ -797,17 +801,17 @@ the "storage pools" information from the and "storagePools" instance.
         _log.warn(msg);
         throw new UnsupportedOperationException(msg);
     }
-*/
+
 	/**
 	 * Create driver task for task type
 	 *
 	 * @param taskType
 	 */
-/*	
+	
 	private DriverTask createDriverTask(String taskType) {
 		String taskID = String.format("%s+%s+%s", PureStorageConstants.DRIVER_NAME, taskType, UUID.randomUUID());
 		DriverTask task = new PureStorageDriverTask(taskID);
-		return null;
+		return task;
 	}
 	
 	private void setConnInfoToRegistry(String systemNativeId, String ipAddress, int port, String username,
@@ -830,5 +834,4 @@ the "storage pools" information from the and "storagePools" instance.
 		this.driverRegistry.setDriverAttributesForKey(PureStorageConstants.DRIVER_NAME, systemNativeId, attributes);
 		_log.info("PureStorageDriver:Saving connection info in registry leave");
 	}
-*/
 }

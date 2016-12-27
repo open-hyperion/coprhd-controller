@@ -50,6 +50,7 @@ import open.hyperion.purestorage.command.SystemCommandResult;
 
 import open.hyperion.purestorage.command.array.ArrayControllerCommandResult;
 import open.hyperion.purestorage.command.array.ArrayCommandResult;
+import open.hyperion.purestorage.command.array.ArraySpaceCommandResult;
 
 import static com.google.json.JsonSanitizer.*;
 
