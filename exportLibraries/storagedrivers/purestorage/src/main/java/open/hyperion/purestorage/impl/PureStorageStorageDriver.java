@@ -72,6 +72,7 @@ import open.hyperion.purestorage.utils.PureStorageUtil;
 import open.hyperion.purestorage.command.SystemCommandResult;
 import open.hyperion.purestorage.command.array.ArrayCommandResult;
 import open.hyperion.purestorage.command.array.ArrayControllerCommandResult;
+import open.hyperion.purestorage.command.array.ArraySpaceCommandResult;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -259,7 +260,7 @@ the "storage pools" information from the and "storagePools" instance.
 
 		try {
 			PureStorageAPI pureStorageAPI = _pureStorageUtil.getPureStorageDevice(storageSystem);
-			
+
 			// get array space details
 			ArraySpaceCommandResult arraySpcRes = pureStorageAPI.getSpaceDetails();
 
