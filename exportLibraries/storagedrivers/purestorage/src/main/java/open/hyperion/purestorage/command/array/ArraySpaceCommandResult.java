@@ -28,102 +28,102 @@ import com.google.gson.annotations.SerializedName;
 
 public class ArraySpaceCommandResult {
 
-    private String _capacity;
+    private String capacity;
 
     public void setCapacity (String capacity) {
-        _capacity = capacity;
+        this.capacity = capacity;
     }
 
     public String getCapacity () {
-        return _capacity;
+        return capacity;
     }
 
-    private String _hostName;
+    private String hostName;
 
     public void setHostName (String hostName) {
-        _hostName = hostName;
+        this.hostName = hostName;
     }
 
     public String getHostName () {
-        return _hostName;
+        return hostName;
     }
 
-    private String _snapshots;
+    private String snapshots;
 
     public void setSnapshots (String snapshots) {
-        _snapshots = snapshots;
+        this.snapshots = snapshots;
     }
 
     public String getSnapshots () {
-        return _snapshots;
+        return snapshots;
     }
 
     private String _volumes;
 
     public void setVolumes (String volumes) {
-        _volumes = volumes;
+        this.volumes = volumes;
     }
 
     public String getVolumes () {
-        return _volumes;
+        return volumes;
     }
 
     @SerializedName("data_reduction")
     private String dataReduction;
 
     public void setDataReduction (String dataReduction) {
-        _dataReduction = dataReduction;
+        this.dataReduction = dataReduction;
     }
 
     public String getDataReduction () {
-        return _dataReduction;
+        return dataReduction;
     }
     
     private String total;
 
     public void setTotal (String total) {
-        _total = total;
+        this.total = total;
     }
 
     public String getTotal () {
-        return _total;
+        return total;
     }
 
     @SerializedName("shared_space")
     private String sharedSpace;
 
     public void setSharedSpace (String sharedSpace) {
-        _sharedSpace = sharedSpace;
+        this.sharedSpace = sharedSpace;
     }
 
     public String getSharedSpace () {
-        return _sharedSpace;
+        return sharedSpace;
     }
 
     @SerializedName("thin_provisioning")
     private String thinProvisioning;
 
     public void setThinProvisioning (String thinProvisioning) {
-        _thinProvisioning = thinProvisioning;
+        this.thinProvisioning = thinProvisioning;
     }
 
     public String getThinProvisioning () {
-        return _thinProvisioning;
+        return thinProvisioning;
     }
 
     @SerializedName("total_reduction")
     private String totalReduction;
 
     public void setTotalReduction (String totalReduction) {
-        _totalReduction = totalReduction;
+        this.totalReduction = totalReduction;
     }
 
     public String getTotalReduction () {
-        return _totalReduction;
+        return totalReduction;
     }
 
     @Override
     public String toString() {
-        return "ArraySpaceCommandResult [capacity=" + _capacity +", dataReduction=" + _dataReduction + ", hostName=" + _hostName + ", sharedSpace=" + _sharedSpace + ", snapshots=" + _snapshots + ", volumes=" + _volumes + ", total=" + _total + ", thinProvisioning=" + _thinProvisioning + ", totalReduction=" + _totalReduction + "]";
+        return "ArraySpaceCommandResult [capacity=" + capacity + ", dataReduction=" + dataReduction + ", hostName=" + hostName + ", sharedSpace=" + sharedSpace + ", snapshots=" + snapshots + ", volumes=" + volumes + ", total=" + total + ", thinProvisioning=" + thinProvisioning + ", totalReduction=" + totalReduction + "]";
     }    
 }
