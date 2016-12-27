@@ -32,6 +32,10 @@ public class PureStorageConstants {
     public static final String USER_NAME   = "USER_NAME";
     public static final String PASSWORD    = "PASSWORD";
 
-    public static final String TASK_TYPE_DISCOVER_STORAGE_SYSTEM="discover-storage-system";
+    public static final String TASK_TYPE_DISCOVER_STORAGE_SYSTEM = "discover-storage-system";
+    public static final String TASK_TYPE_DISCOVER_STORAGE_POOLS  = "discover-storage-pools";
+    public static final String TASK_TYPE_DISCOVER_STORAGE_PORTS  = "discover-storage-ports";
+    public static final String TASK_TYPE_DISCOVER_STORAGE_HOSTS  = "discover-storage-hosts";
+    public static final String TASK_TYPE_GET_STORAGE_VOLUMES     = "get-storage-volumes";
 	
 }

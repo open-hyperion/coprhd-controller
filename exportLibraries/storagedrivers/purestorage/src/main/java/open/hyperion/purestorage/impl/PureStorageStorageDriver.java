@@ -93,6 +93,9 @@ public class PureStorageStorageDriver extends DefaultStorageDriver implements Bl
 	private PureStorageUtil _pureStorageUtil;
 	private PureStorageConstants _pureStorageConstants;
 
+	private StoragePool    _storagePool = new StoragePool();
+	private Set<Protocols> _protocols   = new HashSet();
+
 	public void init() {
 		ApplicationContext context = new ClassPathXmlApplicationContext(new String[] {PURESTORAGE_CONF_FILE}, _parentApplicationContext);
 		_pureStorageUtil = (PureStorageUtil) context.getBean("pureStorageUtil");
@@ -204,15 +207,607 @@ public class PureStorageStorageDriver extends DefaultStorageDriver implements Bl
 		return task;
 	}
 
+    @Override
+    public DriverTask discoverStorageProvider(StorageProvider storageProvider, List<StorageSystem> storageSystems) {
+        String driverName = this.getClass().getSimpleName();
+        String taskId = String.format("%s+%s+%s", driverName, "discover-storage-provider", UUID.randomUUID().toString());
+        DriverTask task = new DefaultDriverTask(taskId);
+        task.setStatus(DriverTask.TaskStatus.FAILED);
+
+        String msg = String.format("%s: %s --- operation is not supported.", driverName, "discoverStorageProvider");
+        _log.warn(msg);
+        task.setMessage(msg);
+        return null;
+    }
+
+// 2. Usage
+/*
+This method is invoked by the southbound SDK framework when CoprHD starts discovering "storage pools"
+of a storage system. The SDK framework will pass the storage system information(such as IP, username & password)
+in the "storageSystem" argument. With this information, the implementation of this method should connect
+to the target storage system and fetch the storage pools information, then set it into the "storagePools"
+instance passed in as the method arguments. After the method returns, the southbound SDK framework will read
+the "storage pools" information from the and "storagePools" instance.
+*/
+ 
+// 3. Arguments
+/*
+1. storageSystem
+    The following fields of this instance are set by the southbound SDK framework as input:
+        ipAddress, portNumber, username, password
+2. storagePools
+    This is a list of the storage pools managed by the storage system being set by the driver
+    as output. Each storage pool instance in this list should have the following field values:
+        nativeId, displayName, deviceLabel, poolName, storageSystemId, protocols, totalCapacity,
+        freeCapacity, subscribedCapacity, operationalStatus, supportedResourceType,
+        poolServiceType, capabilities
+*/
+ 
+// 4. Return value
+/*
+    A "DriverTask" instance which indicates the result of this operation, such as "TaskStatus.READY"
+    and "TaskStatus.FAILED".
+*/
+    @Override
+    public DriverTask discoverStoragePools(StorageSystem storageSystem, List<StoragePool> storagePools) {
+
+		DriverTask task = createDriverTask(PureStorageConstants.TASK_TYPE_DISCOVER_STORAGE_POOLS);
+
+		try {
+			// get array space details
+			ArraySpaceCommandResult arraySpcRes = pureStorageAPI.getSpaceDetails();
+        	String driverName = this.getClass().getSimpleName();
+        	String taskId = String.format("%s+%s+%s", driverName, "discoverStoragePools", UUID.randomUUID().toString());
+        	DriverTask task = new DefaultDriverTask(taskId);
+
+        	_storagePool.setPoolName("PURE_STORAGE_SINGLETON");
+
+        	_storagePool.setStorageSystemId(storageSystem.getSerialNumber());
+        	_protocols.add(Protocols.FC);
+        	_storagePool.setProtocols(_protocols);
+        	Long.valueOf(arraySpcRes);
+        	_storagePool.setTotalCapacity(Long.valueOf(arraySpcRes.getCapacity()));
+        	long freeCap = Long.valueOf(arraySpcRes.getCapacity()).longValue() - Long.valueOf(arraySpcRes.getTotal()).longValue();
+        	_storagePool.setFreeCapacity(freeCap);
+        	_storagePool.setSubscribedCapacity(Long.valueOf(arraySpcRes.getTotal()));
+        	_storagePool.setOperationalStatus(PoolOperationalStatus.READY);
+        	_storagePool.setSupportedResourceType(SupportedResourceType.THIN);
+        	_storagePool.setPoolServiceType(PoolServiceType.block);
+        	
+        	DeduplicationCapabilityDefinition dedupCapabilityDefinition = new DeduplicationCapabilityDefinition();
+
+        	Boolean dedupEnabled = true;
+        	_storagePool.setCapabilities(List<CapabilityInstance> capabilities);
+
+        	List<CapabilityInstance> capabilities = new ArrayList<>(); // SDK requires initialization
+            Map<String, List<String>> props = new HashMap<>();
+            props.put(DeduplicationCapabilityDefinition.PROPERTY_NAME.ENABLED.name(), Arrays.asList(dedupEnabled.toString()));
+
+            CapabilityInstance capabilityInstance = new CapabilityInstance(dedupCapabilityDefinition.getId(), dedupCapabilityDefinition.getId(), props);
+            capabilities.add(capabilityInstance);
+            _storagePool.setCapabilities(capabilities);
+
+            storagePools.clear();
+			storagePools.add(_storagePool);
+            task.setStatus(DriverTask.TaskStatus.READY);
+
+			_log.info("PureStorageDriver:discoverStoragePools information for storage system {}, nativeId {} - end",
+					storageSystem.getIpAddress(), storageSystem.getNativeId());
+
+		} catch (Exception e) {
+			String msg = String.format("PureStorageDriver:discoverStoragePools Unable to gather Singleton pool information from the storage system %s ip %s; Error: %s.\n",
+					storageSystem.getSystemName(), storageSystem.getIpAddress(), e);
+			_log.error(msg);
+			_log.error(CompleteError.getStackTrace(e));
+			task.setMessage(msg);
+			task.setStatus(DriverTask.TaskStatus.FAILED);
+			e.printStackTrace();
+		}
+
+        return task;
+    }
+
+    @Override
+    public DriverTask discoverStoragePorts(StorageSystem storageSystem, List<StoragePort> storagePorts) {
+        String driverName = this.getClass().getSimpleName();
+        String taskId = String.format("%s+%s+%s", driverName, "discoverStoragePorts", UUID.randomUUID().toString());
+        DriverTask task = new DefaultDriverTask(taskId);
+        task.setStatus(DriverTask.TaskStatus.FAILED);
+
+        String msg = String.format("%s: %s --- operation is not supported.", driverName, "discoverStoragePorts");
+        _log.warn(msg);
+        task.setMessage(msg);
+        return null;
+    }
+
+    @Override
+    public DriverTask discoverStorageHostComponents(StorageSystem storageSystem, List<StorageHostComponent> embeddedStorageHostComponents) {
+        String driverName = this.getClass().getSimpleName();
+        String taskId = String.format("%s+%s+%s", driverName, "discoverStorageHostComponents", UUID.randomUUID().toString());
+        DriverTask task = new DefaultDriverTask(taskId);
+        task.setStatus(DriverTask.TaskStatus.FAILED);
+
+        String msg = String.format("%s: %s --- operation is not supported.", driverName, "discoverStorageHostComponents");
+        _log.warn(msg);
+        task.setMessage(msg);
+        return null;
+    }
+
+    @Override
+    public DriverTask stopManagement(StorageSystem driverStorageSystem){
+    	_log.info("Stopping management for StorageSystem {}", driverStorageSystem.getNativeId());
+    	String driverName = this.getClass().getSimpleName();
+        String taskId = String.format("%s+%s+%s", driverName, "stopManagement", UUID.randomUUID().toString());
+        DriverTask task = new DefaultDriverTask(taskId);
+        task.setStatus(DriverTask.TaskStatus.FAILED);
+        
+        String msg = String.format("%s: %s --- operation is not supported.", driverName, "stopManagement");
+        _log.warn(msg);
+        task.setMessage(msg);
+        return null;
+    }
+
+    @Override
+    public DriverTask createVolumes(List<StorageVolume> volumes, StorageCapabilities capabilities) {
+        String taskType = "create-storage-volumes";
+        String driverName = this.getClass().getSimpleName();
+        String taskId = String.format("%s+%s+%s", driverName, taskType, UUID.randomUUID().toString());
+        DriverTask task = new DefaultDriverTask(taskId);
+        task.setStatus(DriverTask.TaskStatus.FAILED);
+
+        String msg = String.format("%s: %s --- operation is not supported.", driverName, "createVolumes");
+        _log.warn(msg);
+        task.setMessage(msg);
+        return null;
+    }
+
+/*
+    @Override
+    public DriverTask getStorageVolumes(StorageSystem storageSystem, List<StorageVolume> storageVolumes, MutableInt token) {
+        String taskType = "get-storage-volumes";
+        String driverName = this.getClass().getSimpleName();
+        String taskId = String.format("%s+%s+%s", driverName, taskType, UUID.randomUUID().toString());
+        DriverTask task = new DefaultDriverTask(taskId);
+        task.setStatus(DriverTask.TaskStatus.FAILED);
+
+        String msg = String.format("%s: %s --- operation is not supported.", driverName, "getStorageVolumes");
+        _log.warn(msg);
+        task.setMessage(msg);
+        return null;
+    }
+
+    @Override
+    public List<VolumeSnapshot> getVolumeSnapshots(StorageVolume volume) {
+        String driverName = this.getClass().getSimpleName();
+        String msg = String.format("%s: %s --- operation is not supported.", driverName, "getVolumeSnapshots");
+        _log.warn(msg);
+        throw new UnsupportedOperationException(msg);
+    }
+
+    @Override
+    public List<VolumeClone> getVolumeClones(StorageVolume volume) {
+        String driverName = this.getClass().getSimpleName();
+        String msg = String.format("%s: %s --- operation is not supported.", driverName, "getVolumeClones");
+        _log.warn(msg);
+        throw new UnsupportedOperationException(msg);
+    }
+
+    @Override
+    public List<VolumeMirror> getVolumeMirrors(StorageVolume volume) {
+        String driverName = this.getClass().getSimpleName();
+        String msg = String.format("%s: %s --- operation is not supported.", driverName, "getVolumeMirrors");
+        _log.warn(msg);
+        throw new UnsupportedOperationException(msg);
+    }
+
+    @Override
+    public DriverTask expandVolume(StorageVolume volume, long newCapacity) {
+        String taskType = "expand-volume";
+        String driverName = this.getClass().getSimpleName();
+        String taskId = String.format("%s+%s+%s", driverName, taskType, UUID.randomUUID().toString());
+        DriverTask task = new DefaultDriverTask(taskId);
+        task.setStatus(DriverTask.TaskStatus.FAILED);
+
+        String msg = String.format("%s: %s --- operation is not supported.", driverName, "expandVolume");
+        _log.warn(msg);
+        task.setMessage(msg);
+        return null;
+    }
+
+    @Override
+    public DriverTask deleteVolume(StorageVolume volume) {
+        String taskType = "delete-storage-volume";
+        String driverName = this.getClass().getSimpleName();
+        String taskId = String.format("%s+%s+%s", driverName, taskType, UUID.randomUUID().toString());
+        DriverTask task = new DefaultDriverTask(taskId);
+        task.setStatus(DriverTask.TaskStatus.FAILED);
+
+        String msg = String.format("%s: %s --- operation is not supported.", driverName, "deleteVolume");
+        _log.warn(msg);
+        task.setMessage(msg);
+        return null;
+    }
+
+    @Override
+    public DriverTask createVolumeSnapshot(List<VolumeSnapshot> snapshots, StorageCapabilities capabilities) {
+        String taskType = "create-volume-snapshot";
+        String driverName = this.getClass().getSimpleName();
+        String taskId = String.format("%s+%s+%s", driverName, taskType, UUID.randomUUID().toString());
+        DriverTask task = new DefaultDriverTask(taskId);
+        task.setStatus(DriverTask.TaskStatus.FAILED);
+
+        String msg = String.format("%s: %s --- operation is not supported.", driverName, "createVolumeSnapshot");
+        _log.warn(msg);
+        task.setMessage(msg);
+        return null;
+    }
+
+    @Override
+    public DriverTask restoreSnapshot(List<VolumeSnapshot> snapshots) {
+        String driverName = this.getClass().getSimpleName();
+        String taskId = String.format("%s+%s+%s", driverName, "restoreSnapshot", UUID.randomUUID().toString());
+        DriverTask task = new DefaultDriverTask(taskId);
+        task.setStatus(DriverTask.TaskStatus.FAILED);
+
+        String msg = String.format("%s: %s --- operation is not supported.", driverName, "restoreSnapshot");
+        _log.warn(msg);
+        task.setMessage(msg);
+        return null;
+    }
+    
+    @Override
+    public DriverTask deleteVolumeSnapshot(VolumeSnapshot snapshot) {
+        String driverName = this.getClass().getSimpleName();
+        String taskId = String.format("%s+%s+%s", driverName, "deleteVolumeSnapshot", UUID.randomUUID().toString());
+        DriverTask task = new DefaultDriverTask(taskId);
+        task.setStatus(DriverTask.TaskStatus.FAILED);
+
+        String msg = String.format("%s: %s --- operation is not supported.", driverName, "deleteVolumeSnapshot");
+        _log.warn(msg);
+        task.setMessage(msg);
+        return null;
+    }
+
+    @Override
+    public DriverTask createVolumeClone(List<VolumeClone> clones, StorageCapabilities capabilities) {
+        String driverName = this.getClass().getSimpleName();
+        String taskId = String.format("%s+%s+%s", driverName, "createVolumeClone", UUID.randomUUID().toString());
+        DriverTask task = new DefaultDriverTask(taskId);
+        task.setStatus(DriverTask.TaskStatus.FAILED);
+
+        String msg = String.format("%s: %s --- operation is not supported.", driverName, "createVolumeClone");
+        _log.warn(msg);
+        task.setMessage(msg);
+        return null;
+    }
+
+    @Override
+    public DriverTask detachVolumeClone(List<VolumeClone> clones) {
+        String driverName = this.getClass().getSimpleName();
+        String taskId = String.format("%s+%s+%s", driverName, "detachVolumeClone", UUID.randomUUID().toString());
+        DriverTask task = new DefaultDriverTask(taskId);
+        task.setStatus(DriverTask.TaskStatus.FAILED);
+
+        String msg = String.format("%s: %s --- operation is not supported.", driverName, "detachVolumeClone");
+        _log.warn(msg);
+        task.setMessage(msg);
+        return null;
+    }
+
+    @Override
+    public DriverTask restoreFromClone(List<VolumeClone> clones) {
+        String driverName = this.getClass().getSimpleName();
+        String taskId = String.format("%s+%s+%s", driverName, "restoreFromClone", UUID.randomUUID().toString());
+        DriverTask task = new DefaultDriverTask(taskId);
+        task.setStatus(DriverTask.TaskStatus.FAILED);
+
+        String msg = String.format("%s: %s --- operation is not supported.", driverName, "restoreFromClone");
+        _log.warn(msg);
+        task.setMessage(msg);
+        return null;
+    }
+
+    @Override
+    public DriverTask deleteVolumeClone(VolumeClone clone) {
+        String driverName = this.getClass().getSimpleName();
+        String taskId = String.format("%s+%s+%s", driverName, "deleteVolumeClone", UUID.randomUUID().toString());
+        DriverTask task = new DefaultDriverTask(taskId);
+        task.setStatus(DriverTask.TaskStatus.FAILED);
+
+        String msg = String.format("%s: %s --- operation is not supported.", driverName, "deleteVolumeClone");
+        _log.warn(msg);
+        task.setMessage(msg);
+        return null;
+    }
+
+    @Override
+    public DriverTask createVolumeMirror(List<VolumeMirror> mirrors, StorageCapabilities capabilities) {
+        String driverName = this.getClass().getSimpleName();
+        String taskId = String.format("%s+%s+%s", driverName, "createVolumeMirror", UUID.randomUUID().toString());
+        DriverTask task = new DefaultDriverTask(taskId);
+        task.setStatus(DriverTask.TaskStatus.FAILED);
+
+        String msg = String.format("%s: %s --- operation is not supported.", driverName, "createVolumeMirror");
+        _log.warn(msg);
+        task.setMessage(msg);
+        return null;
+    }
+
+    @Override
+    public DriverTask deleteVolumeMirror(VolumeMirror mirror) {
+        String driverName = this.getClass().getSimpleName();
+        String taskId = String.format("%s+%s+%s", driverName, "deleteVolumeMirror", UUID.randomUUID().toString());
+        DriverTask task = new DefaultDriverTask(taskId);
+        task.setStatus(DriverTask.TaskStatus.FAILED);
+
+        String msg = String.format("%s: %s --- operation is not supported.", driverName, "deleteVolumeMirror");
+        _log.warn(msg);
+        task.setMessage(msg);
+        return null;
+    }
+
+    @Override
+    public DriverTask createConsistencyGroupMirror(VolumeConsistencyGroup consistencyGroup, List<VolumeMirror> mirrors, List<CapabilityInstance> capabilities) {
+        String driverName = this.getClass().getSimpleName();
+        String taskId = String.format("%s+%s+%s", driverName, "createConsistencyGroupMirror", UUID.randomUUID().toString());
+        DriverTask task = new DefaultDriverTask(taskId);
+        task.setStatus(DriverTask.TaskStatus.FAILED);
+
+        String msg = String.format("%s: %s --- operation is not supported.", driverName, "createConsistencyGroupMirror");
+        _log.warn(msg);
+        task.setMessage(msg);
+        return null;
+    }
+
+    @Override
+    public DriverTask deleteConsistencyGroupMirror(List<VolumeMirror> mirrors) {
+        String driverName = this.getClass().getSimpleName();
+        String taskId = String.format("%s+%s+%s", driverName, "deleteConsistencyGroupMirror", UUID.randomUUID().toString());
+        DriverTask task = new DefaultDriverTask(taskId);
+        task.setStatus(DriverTask.TaskStatus.FAILED);
+
+        String msg = String.format("%s: %s --- operation is not supported.", driverName, "deleteConsistencyGroupMirror");
+        _log.warn(msg);
+        task.setMessage(msg);
+        return null;
+    }
+    
+    @Override
+    public DriverTask addVolumesToConsistencyGroup (List<StorageVolume> volumes, StorageCapabilities capabilities){
+    	_log.info("addVolumesToConsistencyGroup : unsupported operation.");
+    	String driverName = this.getClass().getSimpleName();
+        String taskType = "add-volumes-to-consistency-groupd";
+        String taskId = String.format("%s+%s+%s", driverName, taskType, UUID.randomUUID().toString());
+        DriverTask task = new DefaultDriverTask(taskId);
+        task.setStatus(DriverTask.TaskStatus.FAILED);
+        
+        String msg = String.format("addVolumesToConsistencyGroup: unsupported operation");
+        _log.info(msg);
+        task.setMessage(msg);
+        
+        return null;
+    }
+    
+    @Override
+    public DriverTask removeVolumesFromConsistencyGroup(List<StorageVolume> volumes,  StorageCapabilities capabilities){
+    	_log.info("removeVolumesFromConsistencyGroup : unsupported operation.");
+        String taskType = "remove-volumes-to-consistency-groupd";
+        String driverName = this.getClass().getSimpleName();
+        String taskId = String.format("%s+%s+%s", driverName, taskType, UUID.randomUUID().toString());
+        DriverTask task = new DefaultDriverTask(taskId);
+        task.setStatus(DriverTask.TaskStatus.FAILED);
+        
+        String msg = String.format("removeVolumesFromConsistencyGroup: unsupported operation");
+        _log.info(msg);
+        task.setMessage(msg);
+        
+        return null;
+    }
+
+    @Override
+    public DriverTask splitVolumeMirror(List<VolumeMirror> mirrors) {
+        String driverName = this.getClass().getSimpleName();
+        String taskId = String.format("%s+%s+%s", driverName, "splitVolumeMirror", UUID.randomUUID().toString());
+        DriverTask task = new DefaultDriverTask(taskId);
+        task.setStatus(DriverTask.TaskStatus.FAILED);
+
+        String msg = String.format("%s: %s --- operation is not supported.", driverName, "splitVolumeMirror");
+        _log.warn(msg);
+        task.setMessage(msg);
+        return null;
+    }
+
+    @Override
+    public DriverTask resumeVolumeMirror(List<VolumeMirror> mirrors) {
+        String driverName = this.getClass().getSimpleName();
+        String taskId = String.format("%s+%s+%s", driverName, "resumeVolumeMirror", UUID.randomUUID().toString());
+        DriverTask task = new DefaultDriverTask(taskId);
+        task.setStatus(DriverTask.TaskStatus.FAILED);
+
+        String msg = String.format("%s: %s --- operation is not supported.", driverName, "resumeVolumeMirror");
+        _log.warn(msg);
+        task.setMessage(msg);
+        return null;
+    }
+
+    @Override
+    public DriverTask restoreVolumeMirror(List<VolumeMirror> mirrors) {
+        String driverName = this.getClass().getSimpleName();
+        String taskId = String.format("%s+%s+%s", driverName, "restoreVolumeMirror", UUID.randomUUID().toString());
+        DriverTask task = new DefaultDriverTask(taskId);
+        task.setStatus(DriverTask.TaskStatus.FAILED);
+
+        String msg = String.format("%s: %s --- operation is not supported.", driverName, "restoreVolumeMirror");
+        _log.warn(msg);
+        task.setMessage(msg);
+        return null;
+    }
+
+    @Override
+    public Map<String, HostExportInfo> getVolumeExportInfoForHosts(StorageVolume volume) {
+        String driverName = this.getClass().getSimpleName();
+        String msg = String.format("%s: %s --- operation is not supported.", driverName, "getVolumeExportInfoForHosts");
+        _log.warn(msg);
+        throw new UnsupportedOperationException(msg);
+    }
+
+    @Override
+    public Map<String, HostExportInfo> getSnapshotExportInfoForHosts(VolumeSnapshot snapshot) {
+        String driverName = this.getClass().getSimpleName();
+        String msg = String.format("%s: %s --- operation is not supported.", driverName, "getSnapshotExportInfoForHosts");
+        _log.warn(msg);
+        throw new UnsupportedOperationException(msg);
+    }
+
+    @Override
+    public Map<String, HostExportInfo> getCloneExportInfoForHosts(VolumeClone clone) {
+        String driverName = this.getClass().getSimpleName();
+        String msg = String.format("%s: %s --- operation is not supported.", driverName, "getCloneExportInfoForHosts");
+        _log.warn(msg);
+        throw new UnsupportedOperationException(msg);
+    }
+
+    @Override
+    public Map<String, HostExportInfo> getMirrorExportInfoForHosts(VolumeMirror mirror) {
+        String driverName = this.getClass().getSimpleName();
+        String msg = String.format("%s: %s --- operation is not supported.", driverName, "getMirrorExportInfoForHosts");
+        _log.warn(msg);
+        throw new UnsupportedOperationException(msg);
+    }
+
+    @Override
+    public DriverTask exportVolumesToInitiators(List<Initiator> initiators, List<StorageVolume> volumes, Map<String, String> volumeToHLUMap, List<StoragePort> recommendedPorts, List<StoragePort> availablePorts, StorageCapabilities capabilities, MutableBoolean usedRecommendedPorts, List<StoragePort> selectedPorts) {
+        String driverName = this.getClass().getSimpleName();
+        String taskId = String.format("%s+%s+%s", driverName, "exportVolumesToInitiators", UUID.randomUUID().toString());
+        DriverTask task = new DefaultDriverTask(taskId);
+        task.setStatus(DriverTask.TaskStatus.FAILED);
+
+        String msg = String.format("%s: %s --- operation is not supported.", driverName, "exportVolumesToInitiators");
+        _log.warn(msg);
+        task.setMessage(msg);
+        return null;
+    }
+
+    @Override
+    public DriverTask unexportVolumesFromInitiators(List<Initiator> initiators, List<StorageVolume> volumes) {
+        String driverName = this.getClass().getSimpleName();
+        String taskId = String.format("%s+%s+%s", driverName, "unexportVolumesFromInitiators", UUID.randomUUID().toString());
+        DriverTask task = new DefaultDriverTask(taskId);
+        task.setStatus(DriverTask.TaskStatus.FAILED);
+
+        String msg = String.format("%s: %s --- operation is not supported.", driverName, "unexportVolumesFromInitiators");
+        _log.warn(msg);
+        task.setMessage(msg);
+        return null;
+    }
+
+    @Override
+    public DriverTask createConsistencyGroup(VolumeConsistencyGroup consistencyGroup) {
+        String driverName = this.getClass().getSimpleName();
+        String taskId = String.format("%s+%s+%s", driverName, "createConsistencyGroup", UUID.randomUUID().toString());
+        DriverTask task = new DefaultDriverTask(taskId);
+        task.setStatus(DriverTask.TaskStatus.FAILED);
+
+        String msg = String.format("%s: %s --- operation is not supported.", driverName, "createConsistencyGroup");
+        _log.warn(msg);
+        task.setMessage(msg);
+        return null;
+    }
+
+    @Override
+    public DriverTask deleteConsistencyGroup(VolumeConsistencyGroup consistencyGroup) {
+        String driverName = this.getClass().getSimpleName();
+        String taskId = String.format("%s+%s+%s", driverName, "deleteConsistencyGroup", UUID.randomUUID().toString());
+        DriverTask task = new DefaultDriverTask(taskId);
+        task.setStatus(DriverTask.TaskStatus.FAILED);
+
+        String msg = String.format("%s: %s --- operation is not supported.", driverName, "deleteConsistencyGroup");
+        _log.warn(msg);
+        task.setMessage(msg);
+        return null;
+    }
+
+    @Override
+    public DriverTask createConsistencyGroupSnapshot(VolumeConsistencyGroup consistencyGroup, List<VolumeSnapshot> snapshots, List<CapabilityInstance> capabilities) {
+        String driverName = this.getClass().getSimpleName();
+        String taskId = String.format("%s+%s+%s", driverName, "createConsistencyGroupSnapshot", UUID.randomUUID().toString());
+        DriverTask task = new DefaultDriverTask(taskId);
+        task.setStatus(DriverTask.TaskStatus.FAILED);
+
+        String msg = String.format("%s: %s --- operation is not supported.", driverName, "createConsistencyGroupSnapshot");
+        _log.warn(msg);
+        task.setMessage(msg);
+        return null;
+    }
+
+    @Override
+    public DriverTask deleteConsistencyGroupSnapshot(List<VolumeSnapshot> snapshots) {
+        String driverName = this.getClass().getSimpleName();
+        String taskId = String.format("%s+%s+%s", driverName, "deleteConsistencyGroupSnapshot", UUID.randomUUID().toString());
+        DriverTask task = new DefaultDriverTask(taskId);
+        task.setStatus(DriverTask.TaskStatus.FAILED);
+
+        String msg = String.format("%s: %s --- operation is not supported.", driverName, "deleteConsistencyGroupSnapshot");
+        _log.warn(msg);
+        task.setMessage(msg);
+        return null;
+    }
+
+    @Override
+    public DriverTask createConsistencyGroupClone(VolumeConsistencyGroup consistencyGroup, List<VolumeClone> clones, List<CapabilityInstance> capabilities) {
+        String driverName = this.getClass().getSimpleName();
+        String taskId = String.format("%s+%s+%s", driverName, "createConsistencyGroupClone", UUID.randomUUID().toString());
+        DriverTask task = new DefaultDriverTask(taskId);
+        task.setStatus(DriverTask.TaskStatus.FAILED);
+
+        String msg = String.format("%s: %s --- operation is not supported.", driverName, "createConsistencyGroupClone");
+        _log.warn(msg);
+        task.setMessage(msg);
+        return null;
+    }
+
+    @Override
+    public RegistrationData getRegistrationData() {
+        String driverName = this.getClass().getSimpleName();
+        String msg = String.format("%s: %s --- operation is not supported.", driverName, "getRegistrationData");
+        _log.warn(msg);
+        throw new UnsupportedOperationException(msg);
+    }
+
+    @Override
+    public DriverTask getTask(String taskId) {
+        String driverName = this.getClass().getSimpleName();
+        String msg = String.format("%s: %s --- operation is not supported.", driverName, "getTask");
+        _log.warn(msg);
+        throw new UnsupportedOperationException(msg);
+    }
+
+    @Override
+    public <T extends StorageObject> T getStorageObject(String storageSystemId, String objectId, Class<T> type) {
+        String driverName = this.getClass().getSimpleName();
+        String msg = String.format("%s: %s --- operation is not supported.", driverName, "getStorageObject");
+        _log.warn(msg);
+        throw new UnsupportedOperationException(msg);
+    }
+
+    @Override
+    public boolean validateStorageProviderConnection(StorageProvider storageProvider) {
+        String driverName = this.getClass().getSimpleName();
+        String msg = String.format("%s: %s --- operation is not supported.", driverName, "validateStorageProviderConnection");
+        _log.warn(msg);
+        throw new UnsupportedOperationException(msg);
+    }
+*/
 	/**
 	 * Create driver task for task type
 	 *
 	 * @param taskType
 	 */
+/*	
 	private DriverTask createDriverTask(String taskType) {
 		String taskID = String.format("%s+%s+%s", PureStorageConstants.DRIVER_NAME, taskType, UUID.randomUUID());
 		DriverTask task = new PureStorageDriverTask(taskID);
-		return task;
+		return null;
 	}
 	
 	private void setConnInfoToRegistry(String systemNativeId, String ipAddress, int port, String username,
@@ -235,4 +830,5 @@ public class PureStorageStorageDriver extends DefaultStorageDriver implements Bl
 		this.driverRegistry.setDriverAttributesForKey(PureStorageConstants.DRIVER_NAME, systemNativeId, attributes);
 		_log.info("PureStorageDriver:Saving connection info in registry leave");
 	}
+*/
 }

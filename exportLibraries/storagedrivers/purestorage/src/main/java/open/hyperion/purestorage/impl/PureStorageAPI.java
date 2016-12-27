@@ -70,6 +70,8 @@ public class PureStorageAPI {
 	private static final String URI_SYSTEM    = "/api/1.6/array";
 	private static final String URI_USER_ROLE = "/api/1.6/admin/{0}";
 
+	private static final String URI_ARRAY_SPACE = "/api/1.6/array?space=true";
+
 
 	public PureStorageAPI(URI baseURL, RESTClient client, String username, String password) {
 		_baseURL  = baseURL;
@@ -284,6 +286,40 @@ public class PureStorageAPI {
             }
             _log.info("PureStorageDriver:getArrayDetails leave");
         } //end try/catch/finally
+    }
+
+    /**
+     * Gets the storage array information
+     * @return array space details
+     * @throws Exception
+     */
+    public ArraySpaceCommandResult getSpaceDetails() throws Exception {
+        _log.info("PureStorageDriver:getSpaceDetails enter");
+        ClientResponse clientResp = null;
+
+    	try {
+    		clientResp = getUsingSession(URI_ARRAY_SPACE);
+    		if (clientResp == null) {
+                _log.error("PureStorageDriver:getSpaceDetails There is no response from Pure Storage");
+                throw new PureStorageException("There is no response from Pure Storage");
+    		} else if () {
+                String errResp = getResponseDetails(clientResp);
+                throw new PureStorageException(errResp);
+    		} else {
+                String responseString = clientResp.getEntity(String.class);
+                _log.info("PureStorageDriver:getSpaceDetails Pure Storage response is {}", responseString);
+                ArraySpaceCommandResult arraySpRes = new Gson().fromJson(sanitize(responseString),
+                    ArraySpaceCommandResult.class);
+                return arraySpRes;
+    		}
+    	} catch (Exeception e) {
+    		throw e;
+    	} finally {
+            if (clientResp != null) {
+                clientResp.close();
+            }
+            _log.info("PureStorageDriver:getSpaceDetails leave");
+    	}  //end try/catch/finally
     }
 
     private ClientResponse get(final String uri) throws Exception {
