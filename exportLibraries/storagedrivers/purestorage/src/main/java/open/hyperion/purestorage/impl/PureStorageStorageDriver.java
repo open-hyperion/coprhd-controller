@@ -60,6 +60,7 @@ import com.emc.storageos.storagedriver.model.VolumeClone;
 import com.emc.storageos.storagedriver.model.VolumeConsistencyGroup;
 import com.emc.storageos.storagedriver.model.VolumeMirror;
 import com.emc.storageos.storagedriver.model.VolumeSnapshot;
+
 import com.emc.storageos.storagedriver.storagecapabilities.CapabilityInstance;
 import com.emc.storageos.storagedriver.storagecapabilities.DeduplicationCapabilityDefinition;
 import com.emc.storageos.storagedriver.storagecapabilities.StorageCapabilities;
@@ -258,9 +259,6 @@ the "storage pools" information from the and "storagePools" instance.
 		try {
 			// get array space details
 			ArraySpaceCommandResult arraySpcRes = pureStorageAPI.getSpaceDetails();
-        	String driverName = this.getClass().getSimpleName();
-        	String taskId = String.format("%s+%s+%s", driverName, "discoverStoragePools", UUID.randomUUID().toString());
-        	DriverTask task = new DefaultDriverTask(taskId);
 
         	_storagePool.setPoolName("PURE_STORAGE_SINGLETON");
 
@@ -273,13 +271,13 @@ the "storage pools" information from the and "storagePools" instance.
         	_storagePool.setFreeCapacity(freeCap);
         	_storagePool.setSubscribedCapacity(Long.valueOf(arraySpcRes.getTotal()));
         	_storagePool.setOperationalStatus(PoolOperationalStatus.READY);
-        	_storagePool.setSupportedResourceType(SupportedResourceType.THIN);
+        	_storagePool.setSupportedResourceType(SupportedResourceType.THIN_ONLY);
         	_storagePool.setPoolServiceType(PoolServiceType.block);
         	
         	DeduplicationCapabilityDefinition dedupCapabilityDefinition = new DeduplicationCapabilityDefinition();
 
         	Boolean dedupEnabled = true;
-        	_storagePool.setCapabilities(List<CapabilityInstance> capabilities);
+        	_storagePool.setCapabilities(capabilities);
 
         	List<CapabilityInstance> capabilities = new ArrayList<>(); // SDK requires initialization
             Map<String, List<String>> props = new HashMap<>();
@@ -364,7 +362,7 @@ the "storage pools" information from the and "storagePools" instance.
         return null;
     }
 */
-    
+
 /*
     @Override
     public DriverTask getStorageVolumes(StorageSystem storageSystem, List<StorageVolume> storageVolumes, MutableInt token) {
