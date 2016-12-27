@@ -92,9 +92,11 @@ public class PureStorageStorageDriver extends DefaultStorageDriver implements Bl
 	private static final Logger _log = LoggerFactory.getLogger(PureStorageStorageDriver.class);
 	private ApplicationContext _parentApplicationContext;
 
-	private PureStorageUtil      _pureStorageUtil;
-	private PureStorageConstants _pureStorageConstants;
-	private PureStorageAPI       _pureStorageAPI; 
+	private PureStorageUtil       _pureStorageUtil;
+	private PureStorageConstants  _pureStorageConstants;
+	private PureStorageAPI        _pureStorageAPI; 
+	private PureStorageAPIFactory _pureStorageAPIFactory;
+
 
 	private StoragePool    _storagePool = new StoragePool();
 	private Set<Protocols> _protocols   = new HashSet();
@@ -102,10 +104,11 @@ public class PureStorageStorageDriver extends DefaultStorageDriver implements Bl
 	public void init() {
 		ApplicationContext context = new ClassPathXmlApplicationContext(new String[] {PURESTORAGE_CONF_FILE}, _parentApplicationContext);
 		_pureStorageUtil = (PureStorageUtil) context.getBean("pureStorageUtil");
+		_pureStorageAPIFactory = (PureStorageAPIFactory) context.getBean("pureStorageAPIFactory");
 	}
 
 	public void setApplicationContext(ApplicationContext parentApplicationContext) {
-
+		_parentApplicationContext = parentApplicationContext;
 	}
 
 	/**
@@ -212,6 +215,20 @@ public class PureStorageStorageDriver extends DefaultStorageDriver implements Bl
 
     @Override
     public DriverTask discoverStorageProvider(StorageProvider storageProvider, List<StorageSystem> storageSystems) {
+		DriverTask task = createDriverTask(PureStorageConstants.TASK_TYPE_DISCOVER_STORAGE_SYSTEM);
+
+		_log.info("PureStorageDriver:discoverStorageProvider enter");
+		try {
+			
+			_log.info("storageProvider.getProviderHost(): " + pureStorageSystem.getProviderHost());
+			_log.info("storageProvider.getPortNumber(): " + pureStorageSystem.getPortNumber());
+			_log.info("storageSystems size: " + storageSystems.size());
+
+
+		} catch (Exception e) {
+
+		}
+		_log.info("PureStorageDriver:discoverStorageProvider exit");
 
         return null;
     }
