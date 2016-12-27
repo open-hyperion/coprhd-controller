@@ -78,10 +78,6 @@ public class PureStorageUtil {
 		}
 	}
 
-	public PureStorageAPI getPureStorageDeviceFromSession(String nativeId, Registry driverRegistry) throws PureStorageException {
-
-	}
-
 	public PureStorageAPIFactory getPureStorageAPIFactory() {
 		return _pureStorageAPIFactory;
 	}
