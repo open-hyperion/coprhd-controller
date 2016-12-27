@@ -91,8 +91,9 @@ public class PureStorageStorageDriver extends DefaultStorageDriver implements Bl
 	private static final Logger _log = LoggerFactory.getLogger(PureStorageStorageDriver.class);
 	private ApplicationContext _parentApplicationContext;
 
-	private PureStorageUtil _pureStorageUtil;
+	private PureStorageUtil      _pureStorageUtil;
 	private PureStorageConstants _pureStorageConstants;
+	private PureStorageAPI       _pureStorageAPI; 
 
 	private StoragePool    _storagePool = new StoragePool();
 	private Set<Protocols> _protocols   = new HashSet();
@@ -257,6 +258,8 @@ the "storage pools" information from the and "storagePools" instance.
 		DriverTask task = createDriverTask(PureStorageConstants.TASK_TYPE_DISCOVER_STORAGE_POOLS);
 
 		try {
+			PureStorageAPI pureStorageAPI = _pureStorageUtil.getPureStorageDevice(storageSystem);
+			
 			// get array space details
 			ArraySpaceCommandResult arraySpcRes = pureStorageAPI.getSpaceDetails();
 
@@ -277,7 +280,6 @@ the "storage pools" information from the and "storagePools" instance.
         	DeduplicationCapabilityDefinition dedupCapabilityDefinition = new DeduplicationCapabilityDefinition();
 
         	Boolean dedupEnabled = true;
-        	_storagePool.setCapabilities(capabilities);
 
         	List<CapabilityInstance> capabilities = new ArrayList<>(); // SDK requires initialization
             Map<String, List<String>> props = new HashMap<>();
