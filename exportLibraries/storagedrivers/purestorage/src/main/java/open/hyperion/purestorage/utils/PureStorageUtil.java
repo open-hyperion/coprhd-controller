@@ -54,6 +54,9 @@ public class PureStorageUtil {
 		_log.info("PureStorageDriver:getPureStorageDevice input storage system");
 
 		try {
+			_log.info("pureStorageSystem.getIpAddress(): " + pureStorageSystem.getIpAddress());
+			_log.info("pureStorageSystem.getPortNumber(): " + pureStorageSystem.getPortNumber());
+
 			deviceURI = new URI("https", null, pureStorageSystem.getIpAddress(), pureStorageSystem.getPortNumber(), "/", null,
 					null);
 			return _pureStorageAPIFactory.getRESTClient(deviceURI, pureStorageSystem.getUsername(), pureStorageSystem.getPassword());
