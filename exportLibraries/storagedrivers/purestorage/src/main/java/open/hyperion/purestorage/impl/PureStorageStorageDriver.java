@@ -270,7 +270,7 @@ the "storage pools" information from the and "storagePools" instance.
 		try {
 			PureStorageAPI pureStorageAPI = _pureStorageUtil.getPureStorageDevice(storageSystem);
 
-			// get array space details
+			// get storage pool details
 			ArraySpaceCommandResult arraySpcRes = pureStorageAPI.getSpaceDetails();
 
         	_storagePool.setPoolName("PURE_STORAGE_SINGLETON");
