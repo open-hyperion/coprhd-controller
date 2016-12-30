@@ -273,34 +273,40 @@ the "storage pools" information from the and "storagePools" instance.
 			// get storage pool details
 			ArraySpaceCommandResult arraySpcRes = pureStorageAPI.getSpaceDetails();
 
-        	_storagePool.setPoolName("PURE_STORAGE_SINGLETON");
+			ArraySpaceCommandResult[] arraySpcResArray = pureStorageAPI.getSpaceDetails();
+			for (ArrayControllerCommandResult arraySpcRes : arraySpcResArray) {
+    			if (arrConComRes.getHostName() != null &&
+    				!arrConComRes.getMode().trim().equalsIgnoreCase("")) {
+        			_storagePool.setPoolName("PURE_STORAGE_SINGLETON");
 
-        	_storagePool.setStorageSystemId(storageSystem.getSerialNumber());
-        	_protocols.add(Protocols.FC);
-        	_storagePool.setProtocols(_protocols);
-        	_storagePool.setTotalCapacity(Long.valueOf(arraySpcRes.getCapacity()));
-        	long freeCap = Long.valueOf(arraySpcRes.getCapacity()).longValue() - Long.valueOf(arraySpcRes.getTotal()).longValue();
-        	_storagePool.setFreeCapacity(freeCap);
-        	_storagePool.setSubscribedCapacity(Long.valueOf(arraySpcRes.getTotal()));
-        	_storagePool.setOperationalStatus(PoolOperationalStatus.READY);
-        	_storagePool.setSupportedResourceType(SupportedResourceType.THIN_ONLY);
-        	_storagePool.setPoolServiceType(PoolServiceType.block);
-        	
-        	DeduplicationCapabilityDefinition dedupCapabilityDefinition = new DeduplicationCapabilityDefinition();
+        			_storagePool.setStorageSystemId(storageSystem.getSerialNumber());
+        			_protocols.add(Protocols.FC);
+        			_storagePool.setProtocols(_protocols);
+        			_storagePool.setTotalCapacity(Long.valueOf(arraySpcRes.getCapacity()));
+        			long freeCap = Long.valueOf(arraySpcRes.getCapacity()).longValue() - Long.valueOf(arraySpcRes.getTotal()).longValue();
+        			_storagePool.setFreeCapacity(freeCap);
+        			_storagePool.setSubscribedCapacity(Long.valueOf(arraySpcRes.getTotal()));
+        			_storagePool.setOperationalStatus(PoolOperationalStatus.READY);
+        			_storagePool.setSupportedResourceType(SupportedResourceType.THIN_ONLY);
+        			_storagePool.setPoolServiceType(PoolServiceType.block);
+        			DeduplicationCapabilityDefinition dedupCapabilityDefinition = new DeduplicationCapabilityDefinition();
 
-        	Boolean dedupEnabled = true;
+        			Boolean dedupEnabled = true;
 
-        	List<CapabilityInstance> capabilities = new ArrayList<>(); // SDK requires initialization
-            Map<String, List<String>> props = new HashMap<>();
-            props.put(DeduplicationCapabilityDefinition.PROPERTY_NAME.ENABLED.name(), Arrays.asList(dedupEnabled.toString()));
+        			List<CapabilityInstance> capabilities = new ArrayList<>(); // SDK requires initialization
+            		Map<String, List<String>> props = new HashMap<>();
+            		props.put(DeduplicationCapabilityDefinition.PROPERTY_NAME.ENABLED.name(), Arrays.asList(dedupEnabled.toString()));
 
-            CapabilityInstance capabilityInstance = new CapabilityInstance(dedupCapabilityDefinition.getId(), dedupCapabilityDefinition.getId(), props);
-            capabilities.add(capabilityInstance);
-            _storagePool.setCapabilities(capabilities);
+            		CapabilityInstance capabilityInstance = new CapabilityInstance(dedupCapabilityDefinition.getId(), dedupCapabilityDefinition.getId(), props);
+            		capabilities.add(capabilityInstance);
+            		_storagePool.setCapabilities(capabilities);
 
-            storagePools.clear();
-			storagePools.add(_storagePool);
-            task.setStatus(DriverTask.TaskStatus.READY);
+            		storagePools.clear();
+					storagePools.add(_storagePool);
+            		task.setStatus(DriverTask.TaskStatus.READY);
+    				break;
+    			}
+  			}
 
 			_log.info("PureStorageDriver:discoverStoragePools information for storage system {}, nativeId {} - end",
 					storageSystem.getIpAddress(), storageSystem.getNativeId());

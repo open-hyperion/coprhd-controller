@@ -294,7 +294,7 @@ public class PureStorageAPI {
      * @return array space details
      * @throws Exception
      */
-    public ArraySpaceCommandResult getSpaceDetails() throws Exception {
+    public ArraySpaceCommandResult[] getSpaceDetails() throws Exception {
         _log.info("PureStorageDriver:getSpaceDetails enter");
         ClientResponse clientResp = null;
 
@@ -309,8 +309,8 @@ public class PureStorageAPI {
     		} else {
                 String responseString = clientResp.getEntity(String.class);
                 _log.info("PureStorageDriver:getSpaceDetails Pure Storage response is {}", responseString);
-                ArraySpaceCommandResult arraySpRes = new Gson().fromJson(sanitize(responseString),
-                    ArraySpaceCommandResult.class);
+                ArraySpaceCommandResult[] arraySpRes = new Gson().fromJson(sanitize(responseString),
+                    ArraySpaceCommandResult[].class);
                 return arraySpRes;
     		}
     	} catch (Exception e) {
