@@ -271,7 +271,7 @@ the "storage pools" information from the and "storagePools" instance.
 			PureStorageAPI pureStorageAPI = _pureStorageUtil.getPureStorageDevice(storageSystem);
 
 			// get storage pool details
-			ArraySpaceCommandResult arraySpcRes = pureStorageAPI.getSpaceDetails();
+			//ArraySpaceCommandResult arraySpcRes = pureStorageAPI.getSpaceDetails();
 
 			ArraySpaceCommandResult[] arraySpcResArray = pureStorageAPI.getSpaceDetails();
 			for (ArrayControllerCommandResult arraySpcRes : arraySpcResArray) {
