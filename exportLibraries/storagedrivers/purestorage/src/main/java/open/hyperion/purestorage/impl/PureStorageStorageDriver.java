@@ -274,7 +274,7 @@ the "storage pools" information from the and "storagePools" instance.
 			//ArraySpaceCommandResult arraySpcRes = pureStorageAPI.getSpaceDetails();
 
 			ArraySpaceCommandResult[] arraySpcResArray = pureStorageAPI.getSpaceDetails();
-			for (ArrayControllerCommandResult arraySpcRes : arraySpcResArray) {
+			for (ArraySpaceCommandResult arraySpcRes : arraySpcResArray) {
     			if (arrConComRes.getHostName() != null &&
     				!arrConComRes.getMode().trim().equalsIgnoreCase("")) {
         			_storagePool.setPoolName("PURE_STORAGE_SINGLETON");
