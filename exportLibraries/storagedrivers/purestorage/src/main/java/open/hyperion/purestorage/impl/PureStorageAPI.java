@@ -62,11 +62,11 @@ public class PureStorageAPI {
 	private String _authToken;
 	private String _user;
 	private String _password;
-	private List<NewCookie> _cookies;
 
     // Authentication
 	private static final URI URI_LOGIN   = URI.create("/api/1.6/auth/apitoken");
 	private static final URI URI_SESSION = URI.create("/api/1.6/auth/session");
+    private static List<NewCookie> _cookies;
 
 	private static final String URI_SYSTEM    = "/api/1.6/array";
 	private static final String URI_USER_ROLE = "/api/1.6/admin/{0}";
