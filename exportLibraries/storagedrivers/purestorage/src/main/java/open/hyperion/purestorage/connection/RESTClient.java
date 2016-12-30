@@ -77,7 +77,11 @@ public class RESTClient {
     public ClientResponse get_json(URI url, List<NewCookie> cookies) {
         WebResource r = _client.resource(url);
         WebResource.Builder builder = r.getRequestBuilder();
-        cookies.forEach((v) -> builder.cookie(v));
+
+        if (cookies != null) {
+            cookies.forEach((v) -> builder.cookie(v));
+        }
+        
         return builder.header("Content-Type", "application/json")
                       .header("User-Agent","None")
                       .get(ClientResponse.class);
