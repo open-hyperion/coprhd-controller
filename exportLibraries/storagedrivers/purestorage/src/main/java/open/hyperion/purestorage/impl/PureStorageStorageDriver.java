@@ -213,9 +213,10 @@ public class PureStorageStorageDriver extends DefaultStorageDriver implements Bl
 
 		return task;
 	}
-
+/*
     @Override
     public DriverTask discoverStorageProvider(StorageProvider storageProvider, List<StorageSystem> storageSystems) {
+//
 		DriverTask task = createDriverTask(PureStorageConstants.TASK_TYPE_DISCOVER_STORAGE_SYSTEM);
 
 		_log.info("PureStorageDriver:discoverStorageProvider enter");
@@ -230,10 +231,10 @@ public class PureStorageStorageDriver extends DefaultStorageDriver implements Bl
 
 		}
 		_log.info("PureStorageDriver:discoverStorageProvider exit");
-
+//
         return null;
     }
-
+*/
 // 2. Usage
 /*
 This method is invoked by the southbound SDK framework when CoprHD starts discovering "storage pools"
