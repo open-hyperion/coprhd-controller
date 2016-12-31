@@ -264,7 +264,7 @@ the "storage pools" information from the and "storagePools" instance.
 */
     @Override
     public DriverTask discoverStoragePools(StorageSystem storageSystem, List<StoragePool> storagePools) {
-
+/*
 		DriverTask task = createDriverTask(PureStorageConstants.TASK_TYPE_DISCOVER_STORAGE_POOLS);
 
 		try {
@@ -322,6 +322,8 @@ the "storage pools" information from the and "storagePools" instance.
 		}
 
         return task;
+*/
+		return null;
     }
 
 /*
