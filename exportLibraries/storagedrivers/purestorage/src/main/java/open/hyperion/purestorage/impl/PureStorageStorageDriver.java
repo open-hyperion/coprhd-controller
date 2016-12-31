@@ -265,9 +265,9 @@ the "storage pools" information from the and "storagePools" instance.
 */
     @Override
     public DriverTask discoverStoragePools(StorageSystem storageSystem, List<StoragePool> storagePools) {
-/*
-		DriverTask task = createDriverTask(PureStorageConstants.TASK_TYPE_DISCOVER_STORAGE_POOLS);
 
+		DriverTask task = createDriverTask(PureStorageConstants.TASK_TYPE_DISCOVER_STORAGE_POOLS);
+/*
 		try {
 			PureStorageAPI pureStorageAPI = _pureStorageUtil.getPureStorageDevice(storageSystem);
 
@@ -321,10 +321,11 @@ the "storage pools" information from the and "storagePools" instance.
 			task.setStatus(DriverTask.TaskStatus.FAILED);
 			e.printStackTrace();
 		}
-
-        return task;
 */
-		return null;
+		task.setStatus(DriverTask.TaskStatus.READY);
+        return task;
+
+		//return null;
     }
 
 /*
