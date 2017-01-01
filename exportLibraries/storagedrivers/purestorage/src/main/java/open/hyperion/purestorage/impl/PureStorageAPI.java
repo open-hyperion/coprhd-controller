@@ -425,7 +425,7 @@ public class PureStorageAPI {
                     s.setPortSpeed(Long.valueOf(h.getSpeed()));
                 }
             }
-            return storagePorts.values().toArray();
+            return (StoragePortResult[]) storagePorts.values().toArray();
         } catch (Exception e) {
             throw e;
         } finally {
