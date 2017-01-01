@@ -451,6 +451,7 @@ public class PureStorageAPI {
                 HostCommandResult[] hRes = new Gson().fromJson(sanitize(responseString),
                     HostCommandResult[].class);
                 return hRes;
+            }
         } catch (Exception e) {
             throw e;
         } finally {
