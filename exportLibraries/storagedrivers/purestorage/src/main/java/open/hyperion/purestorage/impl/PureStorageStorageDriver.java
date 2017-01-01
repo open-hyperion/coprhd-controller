@@ -338,7 +338,7 @@ the "storage pools" information from the and "storagePools" instance.
 
 		try {
 			PureStorageAPI pureStorageAPI = _pureStorageUtil.getPureStorageDevice(storageSystem);
-			StoragePortResult[] portResArray = pureStorageAPI.getStoragePortDetails();
+			StoragePortResult[] portResArray = pureStorageAPI.getStoragePortDetails(storageSystem.getSystemName());
 			storagePorts = Arrays.asList(portResArray);
 			task.setStatus(DriverTask.TaskStatus.READY);
 			_log.info("PureStorageStorageDriver: discoverStoragePorts information for storage system {}, nativeId {} - end",
