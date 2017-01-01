@@ -55,6 +55,7 @@ import open.hyperion.purestorage.command.array.ArraySpaceCommandResult;
 import open.hyperion.purestorage.command.port.StoragePortResult;
 import open.hyperion.purestorage.command.port.ArrayPortCommandResult;
 import open.hyperion.purestorage.command.hardware.HardwareCommandResult;
+import open.hyperion.purestorage.command.host.HostCommandResult;
 
 import com.emc.storageos.storagedriver.model.StoragePort;
 import com.emc.storageos.storagedriver.model.StoragePort.TransportType;
