@@ -52,6 +52,11 @@ import open.hyperion.purestorage.command.array.ArrayControllerCommandResult;
 import open.hyperion.purestorage.command.array.ArrayCommandResult;
 import open.hyperion.purestorage.command.array.ArraySpaceCommandResult;
 
+import com.emc.storageos.storagedriver.model.StoragePort;
+import com.emc.storageos.storagedriver.model.StoragePort.TransportType;
+import com.emc.storageos.storagedriver.model.StoragePort.PortType;
+import com.emc.storageos.storagedriver.model.StoragePort.OperationalStatus;
+
 import static com.google.json.JsonSanitizer.*;
 
 public class PureStorageAPI {
@@ -72,6 +77,8 @@ public class PureStorageAPI {
 	private static final String URI_USER_ROLE = "/api/1.6/admin/{0}";
 
 	private static final String URI_ARRAY_SPACE = "/api/1.6/array?space=true";
+    private static final String URI_PORT = "/api/1.6/port?initiators=true ";
+    private static final String URI_HARDWARE = "/api/1.6/hardware";
 
 
 	public PureStorageAPI(URI baseURL, RESTClient client, String username, String password) {
@@ -323,6 +330,105 @@ public class PureStorageAPI {
     	}  //end try/catch/finally
     }
 
+    /**
+     * Gets the port information
+     * @return array and initiator ports
+     * @throws Exception
+     */
+    public ArrayPortCommandResult[] getPortDetails() throws Exception {
+        _log.info("PureStorageDriver:getPortDetails enter");
+        ClientResponse clientResp = null;
+        try {
+            clientResp = getUsingSession(URI_PORT);
+            if (clientResp == null) {
+                _log.error("PureStorageDriver:getPortDetails There is no response from Pure Storage");
+                throw new PureStorageException("There is no response from Pure Storage");
+            } else if (clientResp.getStatus() != 200) {
+                String errResp = getResponseDetails(clientResp);
+                throw new PureStorageException(errResp);
+            } else {
+                String responseString = clientResp.getEntity(String.class);
+                _log.info("PureStorageDriver:getPortDetails Pure Storage response is {}", responseString);
+                ArrayPortCommandResult[] portRes = new Gson().fromJson(sanitize(responseString),
+                    ArrayPortCommandResult[].class);
+                return portRes;
+            }
+        } catch (Exception e) {
+            throw e;
+        } finally {
+            if (clientResp != null) {
+                clientResp.close();
+            }
+            _log.info("PureStorageDriver:getPortDetails leave");
+        }  //end try/catch/finally
+    }
+
+    /**
+     * Gets the hardware information
+     * @return hardware details
+     * @throws Exception
+     */
+    public HardwareCommandResult[] getHardwareDetails() throws Exception {
+        _log.info("PureStorageDriver:getHardwareDetails enter");
+        ClientResponse clientResp = null;
+        try {
+            clientResp = getUsingSession(URI_HARDWARE);
+            if (clientResp == null) {
+                _log.error("PureStorageDriver:getHardwareDetails There is no response from Pure Storage");
+                throw new PureStorageException("There is no response from Pure Storage");
+            } else if (clientResp.getStatus() != 200) {
+                String errResp = getResponseDetails(clientResp);
+                throw new PureStorageException(errResp);
+            } else {
+                String responseString = clientResp.getEntity(String.class);
+                _log.info("PureStorageDriver:getHardwareDetails Pure Storage response is {}", responseString);
+                HardwareCommandResult[] hwRes = new Gson().fromJson(sanitize(responseString),
+                    HardwareCommandResult[].class);
+                return hwRes;
+            }
+        } catch (Exception e) {
+            throw e;
+        } finally {
+            if (clientResp != null) {
+                clientResp.close();
+            }
+            _log.info("PureStorageDriver:getHardwareDetails leave");
+        }  //end try/catch/finally
+    }
+
+    public StoragePortResult[] getStoragePortDetails (String storageSystemId) throws Exception {
+        _log.info("PureStorageDriver:getStoragePortDetails enter");
+        Map<String, StoragePortResult> storagePorts = new HashMap<>();
+        try {
+            HardwareCommandResult[]  hcr  = getHardwareDetails();
+            ArrayPortCommandResult[] apcr = getPortDetails();
+            for (ArrayPortCommandResult ap : apcr) {
+                StoragePortResult spr = new StoragePortResult();
+                spr.setStorageSystemId(storageSystemId);
+                spr.setPortName(ap.getTarget());
+                spr.setPortNetworkId(ap.getTargetWwn());
+                spr.setTransportType(TransportType.FC);
+                storagePorts.put(ap.getTarget(), spr);
+            }
+            for (HardwareCommandResult h : hcr) {
+                StoragePortResult s = storagePorts.get(h.getName());
+                if (s != null) {
+                    if (h.getStatus().equalsIgnoreCase("ok")) {
+                        s.setOperationalStatus(OperationalStatus.OK);
+                    } else {
+                        s.setOperationalStatus(OperationalStatus.NOT_OK);
+                    }
+                    s.setPortSpeed(Long.valueOf(h.getSpeed()));
+                }
+            }
+            return storagePorts.values().toArray();
+        } catch (Exception e) {
+            throw e;
+        } finally {
+            _log.info("PureStorageDriver:getStoragePortDetails leave");
+        }
+    }
+    
     private ClientResponse get(final String uri) throws Exception {
         ClientResponse clientResp = _client.get_json(_baseURL.resolve(uri), _authToken);
         if (clientResp.getStatus() == 403) {

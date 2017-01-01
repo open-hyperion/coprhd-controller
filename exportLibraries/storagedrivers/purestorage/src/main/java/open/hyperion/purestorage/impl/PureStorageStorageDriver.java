@@ -328,20 +328,33 @@ the "storage pools" information from the and "storagePools" instance.
 		//return null;
     }
 
-/*
+
     @Override
     public DriverTask discoverStoragePorts(StorageSystem storageSystem, List<StoragePort> storagePorts) {
-        String driverName = this.getClass().getSimpleName();
-        String taskId = String.format("%s+%s+%s", driverName, "discoverStoragePorts", UUID.randomUUID().toString());
-        DriverTask task = new DefaultDriverTask(taskId);
-        task.setStatus(DriverTask.TaskStatus.FAILED);
+		_log.info("PureStorageStorageDriver: discoverStoragePorts information for storage system {}, nativeId {} - start",
+				storageSystem.getIpAddress(), storageSystem.getNativeId());
+		DriverTask task = createDriverTask(PureStorageConstants.TASK_TYPE_DISCOVER_STORAGE_PORTS);
 
-        String msg = String.format("%s: %s --- operation is not supported.", driverName, "discoverStoragePorts");
-        _log.warn(msg);
-        task.setMessage(msg);
-        return null;
+		try {
+			PureStorageAPI pureStorageAPI = _pureStorageUtil.getPureStorageDevice(storageSystem);
+			StoragePortResult[] portResArray = pureStorageAPI.getStoragePortDetails();
+			storagePorts = Arrays.asList(portResArray);
+			task.setStatus(DriverTask.TaskStatus.READY);
+			_log.info("PureStorageStorageDriver: discoverStoragePorts information for storage system {}, nativeId {} - end",
+					storageSystem.getIpAddress(), storageSystem.getNativeId());
+		} catch (Exception e) {
+			String msg = String.format(
+					"PureStorageStorageDriver: Unable to discover the storage port information for storage system %s native id %s; Error: %s.\n",
+					storageSystem.getSystemName(), storageSystem.getNativeId(), e);
+			_log.error(msg);
+			_log.error(CompleteError.getStackTrace(e));
+			task.setMessage(msg);
+			task.setStatus(DriverTask.TaskStatus.FAILED);
+			e.printStackTrace();
+		}
+		return task;
     }
-
+/*
     @Override
     public DriverTask discoverStorageHostComponents(StorageSystem storageSystem, List<StorageHostComponent> embeddedStorageHostComponents) {
         String driverName = this.getClass().getSimpleName();
