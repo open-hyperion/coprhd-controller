@@ -22,7 +22,7 @@
  * SOFTWARE.
  */
 
-package open.hyperion.purestorage.port.command;
+package open.hyperion.purestorage.command.port;
 
 import com.google.gson.annotations.SerializedName;
 
