@@ -22,7 +22,7 @@
  * SOFTWARE.
  */
 
-package open.hyperion.purestorage.hardware.command;
+package open.hyperion.purestorage.command.hardware;
 
 public class HardwareCommandResult {
     private String details;

@@ -74,6 +74,7 @@ import open.hyperion.purestorage.command.SystemCommandResult;
 import open.hyperion.purestorage.command.array.ArrayCommandResult;
 import open.hyperion.purestorage.command.array.ArrayControllerCommandResult;
 import open.hyperion.purestorage.command.array.ArraySpaceCommandResult;
+import open.hyperion.purestorage.command.port.StoragePortResult;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

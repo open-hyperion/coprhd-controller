@@ -24,6 +24,8 @@
 
 package open.hyperion.purestorage.port.command;
 
+import com.google.gson.annotations.SerializedName;
+
 public class ArrayPortCommandResult {
     private String portal;
     @SerializedName("target_iqn")
