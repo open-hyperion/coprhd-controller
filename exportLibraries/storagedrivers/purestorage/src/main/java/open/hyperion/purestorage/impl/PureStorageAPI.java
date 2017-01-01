@@ -81,8 +81,9 @@ public class PureStorageAPI {
 	private static final String URI_USER_ROLE = "/api/1.6/admin/{0}";
 
 	private static final String URI_ARRAY_SPACE = "/api/1.6/array?space=true";
-    private static final String URI_PORT = "/api/1.6/port?initiators=true ";
-    private static final String URI_HARDWARE = "/api/1.6/hardware";
+    private static final String URI_PORT        = "/api/1.6/port?initiators=true ";
+    private static final String URI_HARDWARE    = "/api/1.6/hardware";
+    private static final String URI_HOST        = "/api/1.6/host?all=true";
 
 
 	public PureStorageAPI(URI baseURL, RESTClient client, String username, String password) {
@@ -431,6 +432,31 @@ public class PureStorageAPI {
         } finally {
             _log.info("PureStorageDriver:getStoragePortDetails leave");
         }
+    }
+
+    public HostCommandResult[] getHostsDetails () throws Exception {
+        _log.info("PureStorageDriver:getHosts enter");
+        ClientResponse clientResp = null;
+        try {
+            clientResp = getUsingSession(URI_HOST);
+            if (clientResp == null) {
+                _log.error("PureStorageDriver:getHosts There is no response from Pure Storage");
+                throw new PureStorageException("There is no response from Pure Storage");
+            } else if (clientResp.getStatus() != 200) {
+                String errResp = getResponseDetails(clientResp);
+                throw new PureStorageException(errResp);
+            } else {
+                String responseString = clientResp.getEntity(String.class);
+                _log.info("PureStorageDriver:getHosts Pure Storage response is {}", responseString);
+                HostCommandResult[] hRes = new Gson().fromJson(sanitize(responseString),
+                    HostCommandResult[].class);
+                return hRes;
+        } catch (Exception e) {
+            throw e;
+        } finally {
+            _log.info("PureStorageDriver:getHosts leave");
+        }
+
     }
     
     private ClientResponse get(final String uri) throws Exception {

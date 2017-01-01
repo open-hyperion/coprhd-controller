@@ -33,6 +33,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.UUID;
+import java.util.stream.Collector;
 
 import com.emc.storageos.storagedriver.AbstractStorageDriver;
 import com.emc.storageos.storagedriver.BlockStorageDriver;
@@ -236,34 +237,6 @@ public class PureStorageStorageDriver extends DefaultStorageDriver implements Bl
         return null;
     }
 */
-// 2. Usage
-/*
-This method is invoked by the southbound SDK framework when CoprHD starts discovering "storage pools"
-of a storage system. The SDK framework will pass the storage system information(such as IP, username & password)
-in the "storageSystem" argument. With this information, the implementation of this method should connect
-to the target storage system and fetch the storage pools information, then set it into the "storagePools"
-instance passed in as the method arguments. After the method returns, the southbound SDK framework will read
-the "storage pools" information from the and "storagePools" instance.
-*/
- 
-// 3. Arguments
-/*
-1. storageSystem
-    The following fields of this instance are set by the southbound SDK framework as input:
-        ipAddress, portNumber, username, password
-2. storagePools
-    This is a list of the storage pools managed by the storage system being set by the driver
-    as output. Each storage pool instance in this list should have the following field values:
-        nativeId, displayName, deviceLabel, poolName, storageSystemId, protocols, totalCapacity,
-        freeCapacity, subscribedCapacity, operationalStatus, supportedResourceType,
-        poolServiceType, capabilities
-*/
- 
-// 4. Return value
-/*
-    A "DriverTask" instance which indicates the result of this operation, such as "TaskStatus.READY"
-    and "TaskStatus.FAILED".
-*/
     @Override
     public DriverTask discoverStoragePools(StorageSystem storageSystem, List<StoragePool> storagePools) {
 
@@ -355,20 +328,39 @@ the "storage pools" information from the and "storagePools" instance.
 		}
 		return task;
     }
-/*
+
+
     @Override
     public DriverTask discoverStorageHostComponents(StorageSystem storageSystem, List<StorageHostComponent> embeddedStorageHostComponents) {
-        String driverName = this.getClass().getSimpleName();
-        String taskId = String.format("%s+%s+%s", driverName, "discoverStorageHostComponents", UUID.randomUUID().toString());
-        DriverTask task = new DefaultDriverTask(taskId);
-        task.setStatus(DriverTask.TaskStatus.FAILED);
+		_log.info("PureStorageStorageDriver: discoverStorageHostComponents information for storage system {}, nativeId {} - start",
+				storageSystem.getIpAddress(), storageSystem.getNativeId());
+		DriverTask task = createDriverTask(PureStorageConstants.TASK_TYPE_DISCOVER_STORAGE_HOSTS);
+        try {
+			PureStorageAPI pureStorageAPI = _pureStorageUtil.getPureStorageDevice(storageSystem);
+			HostCommandResult[] hostResArray = pureStorageAPI.getHostsDetails();
+			for (HostCommandResult h : hostResArray) {
+				StorageHostComponent shc = new StorageHostComponent();
+				shc.setHostName(h.getName());
+				//shc.setArrays.stream(h.getWwn()).collect(Collectors.toSet());
+				embeddedStorageHostComponents.add(shc);
+			}
+			task.setStatus(DriverTask.TaskStatus.READY);
+			_log.info("PureStorageStorageDriver: discoverStoragePorts information for storage system {}, nativeId {} - end",
+					storageSystem.getIpAddress(), storageSystem.getNativeId());
+        } catch (Exception e) {
+			String msg = String.format(
+					"PureStorageStorageDriver: Unable to discover the storage hosts information for storage system %s native id %s; Error: %s.\n",
+					storageSystem.getSystemName(), storageSystem.getNativeId(), e);
+			_log.error(msg);
+			_log.error(CompleteError.getStackTrace(e));
+			task.setMessage(msg);
+			task.setStatus(DriverTask.TaskStatus.FAILED);
+			e.printStackTrace();
 
-        String msg = String.format("%s: %s --- operation is not supported.", driverName, "discoverStorageHostComponents");
-        _log.warn(msg);
-        task.setMessage(msg);
-        return null;
+        }
+        return task;
     }
-
+/*
     @Override
     public DriverTask stopManagement(StorageSystem driverStorageSystem){
     	_log.info("Stopping management for StorageSystem {}", driverStorageSystem.getNativeId());
