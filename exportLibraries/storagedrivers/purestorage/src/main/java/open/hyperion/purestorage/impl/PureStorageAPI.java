@@ -429,9 +429,11 @@ public class PureStorageAPI {
             }
             Object[] a = storagePorts.values().toArray();
             StoragePortResult[] c = new StoragePortResult[a.length];
+            _log.info("Number of storage ports: " + a.length);
             for(int i = 0; i < a.length; i++)
             {
                 c[i] = (StoragePortResult) a[i];
+                _log.info("port index: " + i + " -" + c[i].getPortName());
             }
             return c;
         } catch (Exception e) {
