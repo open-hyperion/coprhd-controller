@@ -82,7 +82,7 @@ public class PureStorageAPI {
 	private static final String URI_USER_ROLE = "/api/1.6/admin/{0}";
 
 	private static final String URI_ARRAY_SPACE = "/api/1.6/array?space=true";
-    private static final String URI_PORT        = "/api/1.6/port?initiators=true ";
+    private static final String URI_PORT        = "/api/1.6/port?initiators=true";
     private static final String URI_HARDWARE    = "/api/1.6/hardware";
     private static final String URI_HOST        = "/api/1.6/host?all=true";
 
