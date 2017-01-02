@@ -433,7 +433,7 @@ public class PureStorageAPI {
             for(int i = 0; i < a.length; i++)
             {
                 c[i] = (StoragePortResult) a[i];
-                _log.info("port index: " + i + " -" + c[i].getPortName());
+                _log.info("port index: " + i + " -" + c[i].getPortName() + " port wwn: " + c[i].getPortNetworkId());
             }
             return c;
         } catch (Exception e) {
