@@ -427,7 +427,13 @@ public class PureStorageAPI {
                     s.setPortSpeed(Long.valueOf(h.getSpeed()));
                 }
             }
-            return (StoragePortResult[]) storagePorts.values().toArray();
+            Object[] a = storagePorts.values().toArray();
+            StoragePortResult[] c = new StoragePortResult[a.length];
+            for(int i = 0; i < a.length; i++)
+            {
+                c[i] = (StoragePortResult) a[i];
+            }
+            return c;
         } catch (Exception e) {
             throw e;
         } finally {
