@@ -129,6 +129,11 @@ public class PureStorageStorageDriver extends DefaultStorageDriver implements Bl
 			storageProvider.setDescription("All Flash Storage Array");
 			storageProvider.setProviderVersion("1.0");
 
+			for (StorageSystem s : storageSystems) {
+				String curStorSysMsg = String.format("PureStorageDriver:discoverStorageProvider storage system found - %s.\n",s.getSystemName());
+				_log.info(curStorSysMsg);
+			}
+
 		} catch (Exception e) {
 			String msg = String.format("PureStorageDriver:discoverStorageProvider Unable to gather storage provider information from the storage system %s; Error: %s.\n",
 					"Pure Storage", e);
