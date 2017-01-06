@@ -115,6 +115,35 @@ public class PureStorageStorageDriver extends DefaultStorageDriver implements Bl
 		_parentApplicationContext = parentApplicationContext;
 	}
 
+    @Override
+    public DriverTask discoverStorageProvider(StorageProvider storageProvider, List<StorageSystem> storageSystems) {
+		DriverTask task = createDriverTask(PureStorageConstants.TASK_TYPE_DISCOVER_STORAGE_SYSTEM);
+
+		_log.info("PureStorageDriver:discoverStorageProvider enter");
+		try {
+			storageProvider.setIsSupportedVersion(true);
+
+			//systemType, serialNumber, systemName, nativeId
+
+			storageProvider.setManufacturer("Pure Storage");
+			storageProvider.setDescription("All Flash Storage Array");
+			storageProvider.setProviderVersion("1.0");
+
+		} catch (Exception e) {
+			String msg = String.format("PureStorageDriver:discoverStorageProvider Unable to gather storage provider information from the storage system %s ip %s; Error: %s.\n",
+					storageSystem.getSystemName(), storageSystem.getIpAddress(), e);
+			_log.error(msg);
+			_log.error(CompleteError.getStackTrace(e));
+			task.setMessage(msg);
+			task.setStatus(DriverTask.TaskStatus.FAILED);
+			e.printStackTrace();
+
+		}
+		_log.info("PureStorageDriver:discoverStorageProvider exit");
+//
+        return task;
+    }
+
 	/**
 	 * Get storage system information and capabilities
 	 */
@@ -137,8 +166,7 @@ public class PureStorageStorageDriver extends DefaultStorageDriver implements Bl
 			String authToken = pureStorageAPI.getAuthToken(storageSystem.getUsername(), storageSystem.getPassword());
 			if (authToken == null) {
 				throw new PureStorageException("Could not get authentication token");
-			}
-			else { // start the session
+			} else { // start the session
 				pureStorageAPI.createSession();
 			}
 
@@ -149,15 +177,13 @@ public class PureStorageStorageDriver extends DefaultStorageDriver implements Bl
 			
 			if (versionNumbers != null && versionNumbers.length >= 1) {
 				storageSystem.setMajorVersion("" + versionNumbers[0]);
-			}
-			else {
+			} else {
 				storageSystem.setMajorVersion("UNKNOWN");
 			}
 
 			if (versionNumbers != null && versionNumbers.length >= 2) {
 				storageSystem.setMinorVersion("" + versionNumbers[1]);
-			}
-			else {
+			} else {
 				storageSystem.setMinorVersion("UNKNOWN");
 			}
 			storageSystem.setIsSupportedVersion(true);
@@ -216,28 +242,7 @@ public class PureStorageStorageDriver extends DefaultStorageDriver implements Bl
 
 		return task;
 	}
-/*
-    @Override
-    public DriverTask discoverStorageProvider(StorageProvider storageProvider, List<StorageSystem> storageSystems) {
-//
-		DriverTask task = createDriverTask(PureStorageConstants.TASK_TYPE_DISCOVER_STORAGE_SYSTEM);
 
-		_log.info("PureStorageDriver:discoverStorageProvider enter");
-		try {
-			
-			_log.info("storageProvider.getProviderHost(): " + storageProvider.getProviderHost());
-			_log.info("storageProvider.getPortNumber(): " + storageProvider.getPortNumber());
-			_log.info("storageSystems size: " + storageSystems.size());
-
-
-		} catch (Exception e) {
-
-		}
-		_log.info("PureStorageDriver:discoverStorageProvider exit");
-//
-        return null;
-    }
-*/
     @Override
     public DriverTask discoverStoragePools(StorageSystem storageSystem, List<StoragePool> storagePools) {
 
