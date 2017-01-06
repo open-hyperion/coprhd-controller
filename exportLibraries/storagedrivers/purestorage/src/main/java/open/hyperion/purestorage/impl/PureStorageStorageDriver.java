@@ -291,7 +291,8 @@ public class PureStorageStorageDriver extends DefaultStorageDriver implements Bl
             		CapabilityInstance capabilityInstance = new CapabilityInstance(dedupCapabilityDefinition.getId(), dedupCapabilityDefinition.getId(), props);
             		capabilities.add(capabilityInstance);
             		storagePool.setCapabilities(capabilities);
-            		storagePool.setSupportedDriveTypes(SupportedDriveTypes.FC);
+            		supportedDriveTypes.add(SupportedDriveTypes.FC);
+            		storagePool.setSupportedDriveTypes(supportedDriveTypes);
             		storagePools.clear();
 					storagePools.add(storagePool);
             		task.setStatus(DriverTask.TaskStatus.READY);
