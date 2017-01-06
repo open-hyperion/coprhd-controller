@@ -130,8 +130,8 @@ public class PureStorageStorageDriver extends DefaultStorageDriver implements Bl
 			storageProvider.setProviderVersion("1.0");
 
 		} catch (Exception e) {
-			String msg = String.format("PureStorageDriver:discoverStorageProvider Unable to gather storage provider information from the storage system %s ip %s; Error: %s.\n",
-					storageSystem.getSystemName(), storageSystem.getIpAddress(), e);
+			String msg = String.format("PureStorageDriver:discoverStorageProvider Unable to gather storage provider information from the storage system %s; Error: %s.\n",
+					"Pure Storage", e);
 			_log.error(msg);
 			_log.error(CompleteError.getStackTrace(e));
 			task.setMessage(msg);
