@@ -102,8 +102,8 @@ public class PureStorageStorageDriver extends DefaultStorageDriver implements Bl
 	private PureStorageAPIFactory _pureStorageAPIFactory;
 
 
-	private StoragePool    _storagePool = new StoragePool();
-	private Set<Protocols> _protocols   = new HashSet();
+	//private StoragePool    _storagePool = new StoragePool();
+	//private Set<Protocols> _protocols   = new HashSet();
 
 	public void init() {
 		ApplicationContext context = new ClassPathXmlApplicationContext(new String[] {PURESTORAGE_CONF_FILE}, _parentApplicationContext);
@@ -190,7 +190,7 @@ public class PureStorageStorageDriver extends DefaultStorageDriver implements Bl
 			
 			// protocols supported
 			List<String> protocols = new ArrayList<String>();
-			protocols.add(Protocols.iSCSI.toString());
+			//protocols.add(Protocols.iSCSI.toString());
 			protocols.add(Protocols.FC.toString());
 			storageSystem.setProtocols(protocols);
 
@@ -205,7 +205,7 @@ public class PureStorageStorageDriver extends DefaultStorageDriver implements Bl
     			}
   			}
 
-			storageSystem.setProvisioningType(SupportedProvisioningType.THIN_AND_THICK);
+			storageSystem.setProvisioningType(SupportedProvisioningType.THIN);
 			Set<StorageSystem.SupportedReplication> supportedReplications = new HashSet<>();
             supportedReplications.add(StorageSystem.SupportedReplication.elementReplica);
             supportedReplications.add(StorageSystem.SupportedReplication.groupReplica);
@@ -247,7 +247,7 @@ public class PureStorageStorageDriver extends DefaultStorageDriver implements Bl
     public DriverTask discoverStoragePools(StorageSystem storageSystem, List<StoragePool> storagePools) {
 
 		DriverTask task = createDriverTask(PureStorageConstants.TASK_TYPE_DISCOVER_STORAGE_POOLS);
-/*
+
 		try {
 			PureStorageAPI pureStorageAPI = _pureStorageUtil.getPureStorageDevice(storageSystem);
 
@@ -258,18 +258,28 @@ public class PureStorageStorageDriver extends DefaultStorageDriver implements Bl
 			for (ArraySpaceCommandResult arraySpcRes : arraySpcResArray) {
     			if (arraySpcRes.getHostName() != null &&
     				!(arraySpcRes.getHostName().trim().equalsIgnoreCase(""))) {
-        			_storagePool.setPoolName("PURE_STORAGE_SINGLETON");
+					StoragePool     storagePool = new StoragePool();
+					
+					Set<Protocols>           protocols           = new HashSet();
+					Set<RaidLevels>          raidLevels          = new HashSet();
+					Set<SupportedDriveTypes> supportedDriveTypes = new HashSet();
+        			
+        			storagePool.setPoolName("Pure Storage single pool");
 
-        			_storagePool.setStorageSystemId(storageSystem.getSerialNumber());
-        			_protocols.add(Protocols.FC);
-        			_storagePool.setProtocols(_protocols);
-        			_storagePool.setTotalCapacity(Long.valueOf(arraySpcRes.getCapacity()));
+        			storagePool.setStorageSystemId(storageSystem.getSerialNumber());
+        			protocols.add(Protocols.FC);
+        			storagePool.setProtocols(protocols);
+        			storagePool.setTotalCapacity(Long.valueOf(arraySpcRes.getCapacity()));
         			long freeCap = Long.valueOf(arraySpcRes.getCapacity()).longValue() - Long.valueOf(arraySpcRes.getTotal()).longValue();
-        			_storagePool.setFreeCapacity(freeCap);
-        			_storagePool.setSubscribedCapacity(Long.valueOf(arraySpcRes.getTotal()));
-        			_storagePool.setOperationalStatus(PoolOperationalStatus.READY);
-        			_storagePool.setSupportedResourceType(SupportedResourceType.THIN_ONLY);
-        			_storagePool.setPoolServiceType(PoolServiceType.block);
+        			storagePool.setFreeCapacity(freeCap);
+        			storagePool.setMaximumThinVolumeSize(Long.getLong(arraySpcRes.getCapacity()));
+        			storagePool.setMinimumThinVolumeSize(Long.getLong("0"));
+        			storagePool.setSubscribedCapacity(Long.valueOf(arraySpcRes.getTotal()));
+        			storagePool.setOperationalStatus(PoolOperationalStatus.READY);
+        			storagePool.setSupportedResourceType(SupportedResourceType.THIN_ONLY);
+        			storagePool.setPoolServiceType(PoolServiceType.block);
+        			raidLevels.add(RaidLevels.RAID3);
+        			storagePool.setSupportedRaidLevels(raidLevels);
         			DeduplicationCapabilityDefinition dedupCapabilityDefinition = new DeduplicationCapabilityDefinition();
 
         			Boolean dedupEnabled = true;
@@ -280,10 +290,10 @@ public class PureStorageStorageDriver extends DefaultStorageDriver implements Bl
 
             		CapabilityInstance capabilityInstance = new CapabilityInstance(dedupCapabilityDefinition.getId(), dedupCapabilityDefinition.getId(), props);
             		capabilities.add(capabilityInstance);
-            		_storagePool.setCapabilities(capabilities);
-
+            		storagePool.setCapabilities(capabilities);
+            		storagePool.setSupportedDriveTypes(SupportedDriveTypes.FC);
             		storagePools.clear();
-					storagePools.add(_storagePool);
+					storagePools.add(storagePool);
             		task.setStatus(DriverTask.TaskStatus.READY);
     				break;
     			}
@@ -301,7 +311,7 @@ public class PureStorageStorageDriver extends DefaultStorageDriver implements Bl
 			task.setStatus(DriverTask.TaskStatus.FAILED);
 			e.printStackTrace();
 		}
-*/
+
 		task.setStatus(DriverTask.TaskStatus.READY);
         return task;
 
