@@ -125,16 +125,15 @@ public class PureStorageStorageDriver extends DefaultStorageDriver implements Bl
 
 			//systemType, serialNumber, systemName, nativeId
 
-			storageProvider.setManufacturer("Pure Storage");
-			storageProvider.setDescription("All Flash Storage Array");
-			storageProvider.setProviderVersion("1.0");
 
+/*
 			String curStorSysCountMsg = String.format("PureStorageDriver:discoverStorageProvider storage system count - %s.\n",storageSystems.size());
 			_log.info(curStorSysCountMsg);
 			for (StorageSystem s : storageSystems) {
 				String curStorSysMsg = String.format("PureStorageDriver:discoverStorageProvider storage system found - %s.\n",s.getSystemName());
 				_log.info(curStorSysMsg);
 			}
+*/
 
 		} catch (Exception e) {
 			String msg = String.format("PureStorageDriver:discoverStorageProvider Unable to gather storage provider information from the storage system %s; Error: %s.\n",
@@ -337,6 +336,10 @@ public class PureStorageStorageDriver extends DefaultStorageDriver implements Bl
 			PureStorageAPI pureStorageAPI = _pureStorageUtil.getPureStorageDevice(storageSystem);
 			StoragePortResult[] portResArray = pureStorageAPI.getStoragePortDetails(storageSystem.getSystemName());
 			storagePorts = Arrays.asList(portResArray);
+			for (StoragePort h : storagePorts) {
+				_log.info("PureStorageStorageDriver: discoverStoragePorts information for storage port name {} - end",
+					    h.getPortName());
+			}
 			task.setStatus(DriverTask.TaskStatus.READY);
 			_log.info("PureStorageStorageDriver: discoverStoragePorts information for storage system {}, nativeId {} - end",
 					storageSystem.getIpAddress(), storageSystem.getNativeId());
