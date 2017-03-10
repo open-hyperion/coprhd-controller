@@ -335,10 +335,12 @@ public class PureStorageStorageDriver extends DefaultStorageDriver implements Bl
 		try {
 			PureStorageAPI pureStorageAPI = _pureStorageUtil.getPureStorageDevice(storageSystem);
 			StoragePortResult[] portResArray = pureStorageAPI.getStoragePortDetails(storageSystem.getSystemName());
-			storagePorts = Arrays.asList(portResArray);
-			for (StoragePort h : storagePorts) {
+			List<StoragePort> storagePortList = Arrays.asList(portResArray);
+
+			for (StoragePort sp : storagePortList) {
 				_log.info("PureStorageStorageDriver: discoverStoragePorts information for storage port name {} - end",
-					    h.getPortName());
+					    sp.getPortName());
+				storagePorts.add(sp);
 			}
 			task.setStatus(DriverTask.TaskStatus.READY);
 			_log.info("PureStorageStorageDriver: discoverStoragePorts information for storage system {}, nativeId {} - end",
