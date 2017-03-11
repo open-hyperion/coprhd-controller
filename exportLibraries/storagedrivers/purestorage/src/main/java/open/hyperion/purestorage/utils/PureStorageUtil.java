@@ -105,14 +105,13 @@ public class PureStorageUtil {
 	}
 
 	public static String formatMacAddress (String origAddress) {
-		for (int i = 0; i< origAddress.length; i++)
-    	{
-    		if (origAddress.charAt(2) == '-')
-    			origAddress = origAddress.replace("-", ":");
-    		else if (origAddress.charAt(2) != ':')
-    			tempAddress = new StringBuilder(origAddress.substring(0,2)).append(":").append(origAddress.substring(2,4))
-                    .append(":").append(origAddress.substring(4,6)).append(":").append(origAddress.substring(6,8))
-                    .append(":").append(origAddress.substring(8,10)).append(":").append(origAddress.substring(10)).toString();        
-    	}    
+    	if (origAddress.charAt(2) == '-')
+    		origAddress = origAddress.replace("-", ":");
+    	else if (origAddress.charAt(2) != ':')
+    		origAddress = new StringBuilder(origAddress.substring(0,2)).append(":").append(origAddress.substring(2,4))
+                .append(":").append(origAddress.substring(4,6)).append(":").append(origAddress.substring(6,8))
+                .append(":").append(origAddress.substring(8,10)).append(":").append(origAddress.substring(10)).toString();        
+
+    	return origAddress;
 	}
 }
