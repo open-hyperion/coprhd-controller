@@ -43,12 +43,14 @@ import com.google.json.JsonSanitizer;
 import com.sun.jersey.api.client.ClientResponse;
 
 import open.hyperion.purestorage.connection.RESTClient;
+
 import open.hyperion.purestorage.impl.PureStorageException;
+
+import open.hyperion.purestorage.utils.PureStorageUtil;
 
 import open.hyperion.purestorage.command.Privileges;
 import open.hyperion.purestorage.command.UserRoleCommandResult;
 import open.hyperion.purestorage.command.SystemCommandResult;
-
 import open.hyperion.purestorage.command.array.ArrayControllerCommandResult;
 import open.hyperion.purestorage.command.array.ArrayCommandResult;
 import open.hyperion.purestorage.command.array.ArraySpaceCommandResult;
@@ -411,8 +413,8 @@ public class PureStorageAPI {
             for (ArrayPortCommandResult ap : apcr) {
                 StoragePortResult spr = new StoragePortResult();
                 spr.setStorageSystemId(storageSystemId);
-                spr.setPortName(ap.getTarget());
-                spr.setPortNetworkId(ap.getTargetWwn());
+                spr.setPortName(PureStorageUtil.formatMacAddress(ap.getTarget()));
+                spr.setPortNetworkId(PureStorageUtil.formatMacAddress(ap.getTargetWwn()));
                 spr.setTransportType(TransportType.FC);
                 spr.setNativeId(ap.getTarget());
                 storagePorts.put(ap.getTarget(), spr);
