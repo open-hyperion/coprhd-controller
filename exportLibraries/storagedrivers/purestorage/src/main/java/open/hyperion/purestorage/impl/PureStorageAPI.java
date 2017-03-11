@@ -414,6 +414,7 @@ public class PureStorageAPI {
                 spr.setPortName(ap.getTarget());
                 spr.setPortNetworkId(ap.getTargetWwn());
                 spr.setTransportType(TransportType.FC);
+                spr.setNativeId(ap.getTarget());
                 storagePorts.put(ap.getTarget(), spr);
             }
             for (HardwareCommandResult h : hcr) {
