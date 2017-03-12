@@ -114,7 +114,7 @@ public class PureStorageUtil {
     	else if (origAddress.charAt(2) != ':') {
         	for (int i = 0; i < origAddress.length(); i++) {
         		formattedAddress.append(origAddress.charAt(i));
-        		if (i%2 == 1) {
+        		if (i%2 == 1 && i < origAddress.length()) {
         			formattedAddress.append(":");
         		}
         	}
