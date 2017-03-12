@@ -272,7 +272,7 @@ public class PureStorageStorageDriver extends DefaultStorageDriver implements Bl
         			
         			storagePool.setPoolName("Pure Storage single pool");
 
-        			storagePool.setStorageSystemId(storageSystem.getSerialNumber());
+        			storagePool.setStorageSystemId(storageSystem.getNativeId());
         			protocols.add(Protocols.FC);
         			storagePool.setProtocols(protocols);
         			storagePool.setTotalCapacity(Long.valueOf(arraySpcRes.getCapacity()));
@@ -299,7 +299,8 @@ public class PureStorageStorageDriver extends DefaultStorageDriver implements Bl
             		storagePool.setCapabilities(capabilities);
             		supportedDriveTypes.add(SupportedDriveTypes.FC);
             		storagePool.setSupportedDriveTypes(supportedDriveTypes);
-            		storagePools.clear();
+            		storagePool.setNativeId(arraySpcRes.getHostname() + " POOL");
+            		//storagePools.clear();
 					storagePools.add(storagePool);
             		task.setStatus(DriverTask.TaskStatus.READY);
     				break;
