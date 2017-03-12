@@ -299,7 +299,7 @@ public class PureStorageStorageDriver extends DefaultStorageDriver implements Bl
             		storagePool.setCapabilities(capabilities);
             		supportedDriveTypes.add(SupportedDriveTypes.FC);
             		storagePool.setSupportedDriveTypes(supportedDriveTypes);
-            		storagePool.setNativeId(arraySpcRes.getHostname() + " POOL");
+            		storagePool.setNativeId(arraySpcRes.getHostName() + " POOL");
             		//storagePools.clear();
 					storagePools.add(storagePool);
             		task.setStatus(DriverTask.TaskStatus.READY);
